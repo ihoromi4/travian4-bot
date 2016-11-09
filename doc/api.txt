@@ -1,0 +1,30 @@
+
+class Login
+    void __init__()
+    bool login()
+    dict get_info()
+
+class Account
+    villeges : list
+
+class Village
+    external : ExternalVillage
+    inside : InsideVillage
+    void __init__(id:int, pos:tuple, name:str)
+
+class ExternalVillage
+    void __init__(login:Login)
+    list get_buildings()
+    dict build_info(id:int)
+    void build(id:int, type:int)
+
+class InsideVillage
+    void __init__(login:Login)
+    list get_buildings()
+    dict build_info(id:int)
+    void build(id:int, type:int)
+
+class Building
+    void __init__()
+    dict get_info()
+    void build()
