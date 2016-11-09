@@ -1,5 +1,5 @@
 import requests
-import bs4 # BeautifulSoup
+import bs4
 
 class Login:
     def __init__(self, server_url, name, password, headers):
@@ -36,4 +36,5 @@ class Login:
         html = self.send_request(self.server_url + '/dorf1.php', data)
         if html != False:
             print('successed!')
+            return html
 

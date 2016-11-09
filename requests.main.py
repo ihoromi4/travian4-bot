@@ -1,6 +1,7 @@
 import configparser
 
 import login
+import account
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -16,3 +17,6 @@ headers = {'User-Agent' : user_agent}
 
 login_ = login.Login(server_url, name, password, headers)
 login_.login()
+
+account_ = account.Account(login_)
+print(account_.get_info())

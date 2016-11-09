@@ -4,7 +4,8 @@ class Account:
     def __init__(self, login):
         self.login = login
 
-    def get_info(html):
+    def get_info(self):
+        html = self.login.login()
         village_vids_compile = re.compile('\?newdid=(\d+)')
         village_vids = village_vids_compile.findall(html)
         print('vids', village_vids)
