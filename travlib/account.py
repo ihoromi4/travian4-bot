@@ -1,5 +1,7 @@
 import re
 
+from .village import Village
+
 NATIONS = ['gauls', 'romans', 'teutons']
 
 RESOURCE_TYPES = ['lumber', 'clay', 'iron', 'crop']
@@ -8,12 +10,21 @@ CLAY = 1
 IRON = 2
 CROP = 3
 
+
 class Account:
     def __init__(self, login):
         self.login = login
+        self.villages = {}  # id: village
+
+    def update_villages(self):
+        village_ids = self.get_village_ids()
+        for id in village_ids:
+            if id not in self.villages:
+                village = Village(self, id)
+                self.villages[id] = village
 
     def get_info(self):
-        info = {}
+        info = dict()
         info['ajax_token'] = self.get_ajax_token()
         info['nation'] = self.get_nation()
         info['village_ids'] = self.get_village_ids()

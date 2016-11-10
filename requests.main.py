@@ -17,10 +17,11 @@ headers = {'User-Agent' : user_agent}
 
 login_ = login.Login(server_url, name, password, headers)
 #login_.login()
+login_.load_dorf1(79385)
 
-account_ = account.Account(login_)
+#account_ = account.Account(login_)
 #print(account_.get_info())
 #print(account_.get_village_ids())
 #print(account_.get_village_names())
-print(account_.get_resources())
+#print(account_.get_resources())
 
