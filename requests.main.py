@@ -1,7 +1,7 @@
 import configparser
 
-import login
-import account
+from travlib import login
+from travlib import account
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -16,7 +16,11 @@ user_agent = config['HEADERS']['user_agent']
 headers = {'User-Agent' : user_agent}
 
 login_ = login.Login(server_url, name, password, headers)
-login_.login()
+#login_.login()
 
 account_ = account.Account(login_)
-print(account_.get_info())
+#print(account_.get_info())
+#print(account_.get_village_ids())
+#print(account_.get_village_names())
+print(account_.get_resources())
+
