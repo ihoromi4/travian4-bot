@@ -15,6 +15,7 @@ class Account:
     def __init__(self, login):
         self.login = login
         self.villages = {}  # id: village
+        self.update_villages()
 
     def update_villages(self):
         village_ids = self.get_village_ids()
@@ -47,10 +48,11 @@ class Account:
         return NATIONS[int(nation)]
 
     def get_village_ids(self):
-        html = self.login.login()
+        html = self.login.get_html_source(self.login.server_url + "/dorf1.php")
         pattern = r'<a  href="\?newdid=(\d+)&amp;"'
         village_village_ids_compile = re.compile(pattern)
-        village_village_ids = village_village_ids_compile.findall(html)
+        village_village_ids = village_village_ids_compile.findall(html.text)
+        village_village_ids = [int(id) for id in village_village_ids]
         return village_village_ids
 
     def get_village_amount(self):

@@ -1,8 +1,10 @@
+import logging
 import time
 
 import requests
 import bs4
 
+logging.debug('Start loading travlib/loging.py')
 
 class LoginError(Exception):
     pass
@@ -26,13 +28,17 @@ class Login:
         self.loggedin = False
         self.html_sources = dict()
 
-    def send_request(self, url, data={}):
+    def send_request(self, url, data={}, params={}):
         try:
             if len(data) == 0:
-                html = self.session.get(url, headers=self.headers)
+                logging.debug('Send get request to url: {}'.format(url))
+                html = self.session.get(url, headers=self.headers, params=params)
+                # html = self.session.request('GET', url, headers=self.headers, data=data, params=params, cookies, allow_redirects=True)
             else:
+                logging.debug('Send post request to url: {}'.format(url))
                 html = self.session.post(url, headers=self.headers, data=data)
         except:
+            logging.error('Net problem, cant fetch the URL {}'.format(url))
             print('Net problem, cant fetch the URL' + url)
             raise
         return html
@@ -52,7 +58,7 @@ class Login:
             'w': '1366:768',
             'login': login
             }
-        html = self.send_request(self.server_url + '/dorf1.php', data)
+        html = self.send_request(self.server_url + '/dorf1.php', data=data)
         if 'playerName' in html.text:
             self.loggedin = True
             print('Login succeed!')
@@ -79,7 +85,7 @@ class Login:
         return html
 
     def get_html_source(self, url, data={}):
-        key = (url, HashableDict(data))
+        key = (url, hash(tuple(sorted(data.items()))))
         if key in self.html_sources:
             html_source, load_time = self.html_sources[key]
             if time.time() - load_time < self.html_obsolescence_time:
@@ -90,4 +96,6 @@ class Login:
         return html_source
 
     def load_dorf1(self, village_id):
-        return self.get_html_source(self.server_url + "/dorf1.php", {'newdid': village_id})
+        return self.get_html_source(self.server_url + '/dorf1.php?newdid={}&'.format(village_id))
+
+logging.debug('Etart loading travlib/loging.py')
