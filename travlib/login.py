@@ -1,5 +1,6 @@
 import logging
 import time
+import re
 
 import requests
 import bs4
@@ -16,8 +17,9 @@ class HashableDict(dict):
 
 
 class Login:
-    def __init__(self, server_url, name, password, headers={}):
-        self.server_url = server_url
+    def __init__(self, url_data, name, password, headers={}):
+        self.url_data = url_data
+        self.server_url = self.url_data["server-url"]
         self.name = name
         self.password = password
         self.headers = headers
@@ -27,6 +29,7 @@ class Login:
         self.html_obsolescence_time = 0.33
         self.loggedin = False
         self.html_sources = dict()
+        self._game_version = None
 
     def send_request(self, url, data={}, params={}):
         try:
@@ -98,4 +101,20 @@ class Login:
     def load_dorf1(self, village_id):
         return self.get_html_source(self.server_url + '/dorf1.php?newdid={}&'.format(village_id))
 
-logging.debug('Etart loading travlib/loging.py')
+    def get_game_version(self):
+        if not self._game_version:
+            html = self.get_html_source(self.server_url + '/dorf1.php').text
+            pattern = r"Travian.Game.version = '([.\d]*)';"
+            regex = re.compile(pattern)
+            results = regex.findall(html)
+            if not len(results):
+                raise TypeError("It is not travian page!")
+            try:
+                game_version = float(results[0])
+            except ValueError:
+                raise ValueError("Bad parsing pattern!")
+            self._game_version = game_version
+        return self._game_version
+    game_version = property(get_game_version)
+
+logging.debug('Start loading travlib/loging.py')
