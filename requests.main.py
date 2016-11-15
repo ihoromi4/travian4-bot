@@ -24,12 +24,18 @@ print('Travian version:', login_.game_version)
 
 account_ = account.Account(login_)
 
-print(account_.get_village_ids())
+#print(account_.get_village_ids())
 
 village1 = account_.villages[0]
 village2 = account_.villages[1]
-print(village2.get_builds())
-print(village2.outside.get_buildings())
+#print(village2.get_builds())
+#for field in village2.outside.resource_fields:
+#    print(field.id, field.name)
+
+for field in village2.inside.buildings:
+    print(field.id, field.name, field.level)
+
+#print(village2.pos)
 '''
 print('village 1 id:', village1.id)
 print('name village 1:', village1.name)

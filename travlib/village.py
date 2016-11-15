@@ -3,11 +3,13 @@ import re
 from . import outsidevillage
 from . import insidevillage
 
+
 class Village:
-    def __init__(self, account, id):
+    def __init__(self, account, id, pos):
         self.account = account
         self.login = account.login
         self.id = id
+        self.pos = tuple(pos)
         # ---
         self.outside = outsidevillage.OutsideVillage(self)
         self.inside = insidevillage.InsideVillage(self)

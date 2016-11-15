@@ -101,6 +101,9 @@ class Login:
     def load_dorf1(self, village_id):
         return self.get_html_source(self.server_url + '/dorf1.php?newdid={}&'.format(village_id))
 
+    def load_dorf2(self, village_id):
+        return self.get_html_source(self.server_url + '/dorf2.php?newdid={}&'.format(village_id))
+
     def get_game_version(self):
         if not self._game_version:
             html = self.get_html_source(self.server_url + '/dorf1.php').text

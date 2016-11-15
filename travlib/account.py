@@ -34,9 +34,11 @@ class Account:
 
     def update_villages(self):
         village_ids = self.get_village_ids()
+        village_positions = self.get_villages_positions()
         for id in village_ids:
             if id not in self._villages:
-                village = Village(self, id)
+                pos = village_positions[village_ids.index(id)]
+                village = Village(self, id, pos)
                 self._villages[id] = village
 
     def get_villages(self) -> Village:
@@ -57,21 +59,21 @@ class Account:
     villages_names = property(get_villages_names)
 
     def get_ajax_token(self):
-        html = self.login.login()
+        html = self.login.get_html_source(self.login.server_url + "/dorf1.php")
         pattern = r'ajaxToken\s*=\s*\'(\w+)\''
         ajax_token_compile = re.compile(pattern)
-        ajax_token = ajax_token_compile.findall(html)[0]
+        ajax_token = ajax_token_compile.findall(html.text)[0]
         return ajax_token
     ajax_token = property(get_ajax_token)
 
     def get_villages_positions(self):
-        html = self.login.login()
+        html = self.login.get_html_source(self.login.server_url + "/dorf1.php")
         pattern = r'coordinateX">\(&#x202d;&(#45;)*&*#x202d;(\d+)'
         x_compile = re.compile(pattern)
-        x = x_compile.findall(html)
+        x = x_compile.findall(html.text)
         pattern = r'coordinateY">&#x202d;&(#45;)*&*#x202d;(\d+)'
         y_compile = re.compile(pattern)
-        y = y_compile.findall(html)
+        y = y_compile.findall(html.text)
         positions = []
         for i in range(len(x)):
             position = [0, 0]
