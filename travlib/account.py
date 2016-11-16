@@ -1,6 +1,7 @@
 import re
 
 from .village import Village
+from . import buildings
 
 NATIONS = ['gauls', 'romans', 'teutons']
 
@@ -14,18 +15,20 @@ CROP = 3
 class Account:
     def __init__(self, login):
         self.login = login
+        self.language = login.language
+        buildings.set_lang(self.language.data['buildings'])
         self._villages = {}  # id: village
         self.nation = NATIONS[self.get_nation_id()]
         self.update_villages()
 
     def get_nation_id(self):
-        html = self.login.get_html_source(self.login.server_url + "/dorf1.php").text
+        html = self.login.get_html("dorf1.php")
         nation_compile = re.compile('nation(\d)')
         nation = nation_compile.findall(html)[0]
         return int(nation)
 
     def get_village_ids(self):
-        html = self.login.get_html_source(self.login.server_url + "/dorf1.php").text
+        html = self.login.get_html("dorf1.php")
         pattern = r'<a  href="\?newdid=(\d+)&amp;"'
         village_village_ids_compile = re.compile(pattern)
         village_village_ids = village_village_ids_compile.findall(html)
@@ -51,7 +54,7 @@ class Account:
     villages_amount = property(get_villages_amount)
 
     def get_villages_names(self):
-        html = self.login.get_html_source(self.login.server_url + "/dorf1.php")
+        html = self.login.get_html("dorf1.php")
         pattern = r'<div class="name">(.*)</div>'
         regex = re.compile(pattern)
         names = regex.findall(html)
@@ -59,21 +62,21 @@ class Account:
     villages_names = property(get_villages_names)
 
     def get_ajax_token(self):
-        html = self.login.get_html_source(self.login.server_url + "/dorf1.php")
+        html = self.login.get_html("dorf1.php")
         pattern = r'ajaxToken\s*=\s*\'(\w+)\''
         ajax_token_compile = re.compile(pattern)
-        ajax_token = ajax_token_compile.findall(html.text)[0]
+        ajax_token = ajax_token_compile.findall(html)[0]
         return ajax_token
     ajax_token = property(get_ajax_token)
 
     def get_villages_positions(self):
-        html = self.login.get_html_source(self.login.server_url + "/dorf1.php")
+        html = self.login.get_html("dorf1.php")
         pattern = r'coordinateX">\(&#x202d;&(#45;)*&*#x202d;(\d+)'
         x_compile = re.compile(pattern)
-        x = x_compile.findall(html.text)
+        x = x_compile.findall(html)
         pattern = r'coordinateY">&#x202d;&(#45;)*&*#x202d;(\d+)'
         y_compile = re.compile(pattern)
-        y = y_compile.findall(html.text)
+        y = y_compile.findall(html)
         positions = []
         for i in range(len(x)):
             position = [0, 0]

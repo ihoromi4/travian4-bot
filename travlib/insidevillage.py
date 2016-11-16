@@ -1,7 +1,9 @@
 import re
+
 import bs4
 
-from . import building
+from . import buildings
+from .buildings import marketplace
 
 
 class InsideVillage:
@@ -10,16 +12,27 @@ class InsideVillage:
         self.login = village.login
         self.id = village.id
         self.buildings = []
+        # ---
+        self.marketplace = None
         self.create_buildings()
 
+    def get_html(self, params={}):
+        return self.village.get_html("build.php", params=params)
+
     def create_buildings(self):
-        buildings = self.get_buildings()
-        for building_info in buildings:
-            building_ = building.Building(self, building_info['name'], building_info['id'], building_info['level'])
-            self.buildings.append(building_)
+        buildings_list = self.get_buildings()
+        for building_info in buildings_list:
+            name = building_info['name']
+            id = building_info['id']
+            level = building_info['level']
+            building_type = buildings.get_building_type(name)
+            building = building_type(self, name, id, level)
+            if building_type is marketplace.Marketplace:
+                self.marketplace = building
+            self.buildings.append(building)
 
     def get_buildings(self):
-        html = self.login.load_dorf2(self.id).text
+        html = self.login.load_dorf2(self.id)
         soup = bs4.BeautifulSoup(html, 'html5lib')
         building_list = soup.find_all('area')
         buildings = []

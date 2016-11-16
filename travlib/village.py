@@ -14,6 +14,10 @@ class Village:
         self.outside = outsidevillage.OutsideVillage(self)
         self.inside = insidevillage.InsideVillage(self)
 
+    def get_html(self, last_url='', params={}):
+        params['newdid'] = self.id
+        return self.login.get_html(last_url, params=params)
+
     def get_name(self) -> str:
         html_text = self.login.load_dorf1(self.id).text
         pattern = r'<div id="villageNameField" class="boxTitle">(.*)</div>'

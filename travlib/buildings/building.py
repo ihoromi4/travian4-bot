@@ -5,3 +5,4 @@ class Building:
         self.name = name
         self.id = id
         self.level = level
+        self.eng_name = ''

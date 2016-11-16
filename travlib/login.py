@@ -17,9 +17,9 @@ class HashableDict(dict):
 
 
 class Login:
-    def __init__(self, url_data, name, password, headers={}):
-        self.url_data = url_data
-        self.server_url = self.url_data["server-url"]
+    def __init__(self, language, name, password, headers={}):
+        self.language = language
+        self.server_url = language.url
         self.name = name
         self.password = password
         self.headers = headers
@@ -70,43 +70,44 @@ class Login:
         print('Login fail!')
         return False
 
-    def load_page(self, url, data={}):
+    def load_html(self, url, params={}):
         if not self.loggedin:
             if not self.login():
                 raise LoginError("Something is wrong.")
-        html = self.send_request(url, data)
-        if 'playerName' not in html.text:
+        html = self.send_request(url, data={}, params=params).text
+        if 'playerName' not in html:
             self.loggedin = False
             print('Suddenly logged off')
             for i in range(self.reconnections):
                 if self.login():
-                    html = self.send_request(url, data)
+                    html = self.send_request(url, data={}, params=params)
                     return html
                 else:
                     print(('Could not relogin %d time' % (self.reconnections-i)))
                     time.sleep(self.relogin_delay)
         return html
 
-    def get_html_source(self, url, data={}):
-        key = (url, hash(tuple(sorted(data.items()))))
+    def get_html(self, last_url, params={}):
+        url = self.server_url + last_url
+        key = (url, hash(tuple(sorted(params.items()))))
         if key in self.html_sources:
-            html_source, load_time = self.html_sources[key]
+            html, load_time = self.html_sources[key]
             if time.time() - load_time < self.html_obsolescence_time:
-                return html_source
+                return html
         load_time = time.time()
-        html_source = self.load_page(url, data)
-        self.html_sources[key] = (html_source, load_time)
-        return html_source
+        html = self.load_html(url, params=params)
+        self.html_sources[key] = (html, load_time)
+        return html
 
     def load_dorf1(self, village_id):
-        return self.get_html_source(self.server_url + '/dorf1.php?newdid={}&'.format(village_id))
+        return self.get_html('dorf1.php?newdid={}&'.format(village_id))
 
     def load_dorf2(self, village_id):
-        return self.get_html_source(self.server_url + '/dorf2.php?newdid={}&'.format(village_id))
+        return self.get_html('dorf2.php?newdid={}&'.format(village_id))
 
     def get_game_version(self):
         if not self._game_version:
-            html = self.get_html_source(self.server_url + '/dorf1.php').text
+            html = self.get_html('dorf1.php')
             pattern = r"Travian.Game.version = '([.\d]*)';"
             regex = re.compile(pattern)
             results = regex.findall(html)

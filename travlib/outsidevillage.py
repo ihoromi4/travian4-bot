@@ -1,7 +1,10 @@
 import re
+
 import bs4
 
-from . import resourcefield
+from . import buildings
+from .buildings import resourcefield
+
 
 class OutsideVillage:
     def __init__(self, village):
@@ -14,11 +17,15 @@ class OutsideVillage:
     def create_resource_fields(self):
         resource_fields = self.get_resource_fields()
         for field_info in resource_fields:
-            field = resourcefield.ResourceField(self, field_info['name'], field_info['id'], field_info['level'])
+            name = field_info['name']
+            id = field_info['id']
+            level = field_info['level']
+            building_type = buildings.get_building_type(name)
+            field = building_type(self, name, id, level)
             self.resource_fields.append(field)
 
     def get_resource_fields(self):
-        html = self.login.load_dorf1(self.id).text
+        html = self.login.load_dorf1(self.id)
         # pattern = r'alt="(\b.*\b) Уровень (\d*)"/><area href='
         # buildings = re.findall(pattern, html_text)
         soup = bs4.BeautifulSoup(html, 'html5lib')
