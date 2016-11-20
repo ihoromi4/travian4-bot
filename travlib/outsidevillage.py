@@ -14,6 +14,12 @@ class OutsideVillage:
         self.resource_fields = []
         self.create_resource_fields()
 
+    def get_html(self, params={}):
+        return self.village.get_html("build.php", params=params)
+
+    def start_build(self, building_id, c):
+        self.village.get_html('dorf1.php', {'a': building_id, 'c': c})
+
     def create_resource_fields(self):
         resource_fields = self.get_resource_fields()
         for field_info in resource_fields:

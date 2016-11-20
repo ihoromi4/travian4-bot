@@ -22,10 +22,10 @@ account_ = account.Account(logn)
 
 village1 = account_.villages[0]
 village2 = account_.villages[1]
-
-marketplace = village1.inside.marketplace
-if marketplace:
-    print(marketplace.name, marketplace.level)
-    print(marketplace.get_pages())
-else:
-    print("No marketplace")
+village3 = account_.villages[2]
+print(village2.name)
+for b in village2.inside.buildings:
+    if b.name == 'Амбар':
+        break
+print(b.name)
+b.build()

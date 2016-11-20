@@ -19,6 +19,9 @@ class InsideVillage:
     def get_html(self, params={}):
         return self.village.get_html("build.php", params=params)
 
+    def start_build(self, building_id, c):
+        self.village.get_html('dorf2.php', {'a': building_id, 'c': c})
+
     def create_buildings(self):
         buildings_list = self.get_buildings()
         for building_info in buildings_list:
@@ -44,7 +47,7 @@ class InsideVillage:
                 level = 0
                 id = re.findall(r'id=(\d+)', building['href'])[0]
             else:
-                name, level = re.findall(r'(.+) <span class="level">.+ (\d+)</span>', alt)[0]
+                name, level = re.findall(r'(\b.+\b) <span class="level">\b\S+\b (\d+)</span>', alt)[0]
                 id = re.findall(r'id=(\d+)', building['href'])[0]
             building_dict['name'] = name
             building_dict['level'] = level
