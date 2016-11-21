@@ -5,21 +5,20 @@ import re
 import requests
 import bs4
 
+from . import language
+
+
 logging.debug('Start loading travlib/loging.py')
+
 
 class LoginError(Exception):
     pass
 
 
-class HashableDict(dict):
-    def __hash__(self):
-        return hash(tuple(sorted(self.items())))
-
-
 class Login:
-    def __init__(self, language, name, password, headers={}):
-        self.language = language
-        self.server_url = language.url
+    def __init__(self, lang_dir, url, name, password, headers={}):
+        self._language = None
+        self.server_url = url
         self.name = name
         self.password = password
         self.headers = headers
@@ -30,6 +29,7 @@ class Login:
         self.loggedin = False
         self.html_sources = dict()
         self._game_version = None
+        self.langdata = language.Language("{}{}.json".format(lang_dir, self.language))
 
     def send_request(self, url, data={}, params={}):
         try:
@@ -120,5 +120,17 @@ class Login:
             self._game_version = game_version
         return self._game_version
     game_version = property(get_game_version)
+
+    def get_language(self):
+        if not self._language:
+            html = self.get_html('dorf1.php')
+            pattern = r"Travian.Game.worldId = '(\D+)\d+';"
+            regex = re.compile(pattern)
+            results = regex.findall(html)
+            if not results:
+                raise TypeError("It is not travian page!")
+            self._language = results[0]
+        return self._language
+    language = property(get_language)
 
 logging.debug('Start loading travlib/loging.py')

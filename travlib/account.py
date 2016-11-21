@@ -15,8 +15,7 @@ CROP = 3
 class Account:
     def __init__(self, login):
         self.login = login
-        self.language = login.language
-        buildings.set_lang(self.language.data['buildings'])
+        self.langdata = login.langdata
         self._villages = {}  # id: village
         self.nation = NATIONS[self.get_nation_id()]
         self.update_villages()

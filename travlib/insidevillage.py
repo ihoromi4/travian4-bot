@@ -28,7 +28,8 @@ class InsideVillage:
             name = building_info['name']
             id = building_info['id']
             level = building_info['level']
-            building_type = buildings.get_building_type(name)
+            repr = self.village.account.langdata.data["buildings"].get(name, "")
+            building_type = buildings.get_building_type(repr)
             building = building_type(self, name, id, level)
             if building_type is marketplace.Marketplace:
                 self.marketplace = building

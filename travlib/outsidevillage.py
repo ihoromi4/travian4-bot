@@ -26,7 +26,8 @@ class OutsideVillage:
             name = field_info['name']
             id = field_info['id']
             level = field_info['level']
-            building_type = buildings.get_building_type(name)
+            repr = self.village.account.langdata.data["buildings"].get(name, "")
+            building_type = buildings.get_building_type(repr)
             field = building_type(self, name, id, level)
             self.resource_fields.append(field)
 
