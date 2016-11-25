@@ -1,3 +1,4 @@
+import json
 import re
 import bs4
 
@@ -72,3 +73,44 @@ class Marketplace(building.Building):
         for page in range(1, max_page + 1):
             biddings.extend(self.get_page(page))
         return biddings
+
+    def send_resources(self, name_or_pos, res=[0, 0, 0, 0]):
+        login = self.village_part.village.login
+        ajax_token = self.village_part.village.account.ajax_token
+        html = self.village_part.get_html({'id': self.id, 't': '5'})
+        data = dict()
+        for i in range(0, 4):
+            data["r{}".format(i+1)] = str(res[i])
+        data['dname'] = ''
+        data['x'] = ''
+        data['y'] = ''
+        if type(name_or_pos) is str:
+            data['dname'] = name_or_pos
+        elif type(name_or_pos) in (tuple, list):
+            if len(name_or_pos) == 2:
+                data['x'] = str(name_or_pos[0])
+                data['y'] = str(name_or_pos[1])
+        else:
+            raise TypeError("name_or_pos wrong argument type")
+        data['id'] = str(self.id)
+        data['t'] = '5'
+        data['x2'] = '1'
+        data['ajaxToken'] = ajax_token
+        data['cmd'] = 'prepareMarketplace'
+        html = login.get_ajax('ajax.php', data=data)
+        response = json.loads(html)['response']
+        if response['error']:
+            print('send resource: error true')
+            return False
+        print(response['data'])
+        with open('mpt5.html', 'w') as stream:
+            stream.write(html)
+        bs = bs4.BeautifulSoup(html, 'html5lib')
+        form = bs.find('form')
+        if not form:
+            return False
+        for i in form.children:
+            if i.name == 'input':
+                data[i['name'].strip('\\\"\'')] = i['value'].strip('\\\"\'')
+        html = login.get_ajax('ajax.php', data=data)
+        return True

@@ -25,7 +25,7 @@ class Login:
         self.session = requests.Session()
         self.relogin_delay = 0.33
         self.reconnections = 3
-        self.html_obsolescence_time = 0.33
+        self.html_obsolescence_time = 3.0
         self.loggedin = False
         self.html_sources = dict()
         self._game_version = None
@@ -70,32 +70,38 @@ class Login:
         print('Login fail!')
         return False
 
-    def load_html(self, url, params={}):
+    def load_html(self, url, params={}, data={}):
         if not self.loggedin:
             if not self.login():
                 raise LoginError("Something is wrong.")
-        html = self.send_request(url, data={}, params=params).text
+        html = self.send_request(url, data=data, params=params).text
         if 'playerName' not in html:
             self.loggedin = False
             print('Suddenly logged off')
             for i in range(self.reconnections):
                 if self.login():
-                    html = self.send_request(url, data={}, params=params)
+                    html = self.send_request(url, data=data, params=params).text
                     return html
                 else:
                     print(('Could not relogin %d time' % (self.reconnections-i)))
                     time.sleep(self.relogin_delay)
         return html
 
-    def get_html(self, last_url, params={}):
+    def get_ajax(self, last_url, params={}, data={}):
+        url = self.server_url + last_url
+        html = self.send_request(url, data=data, params=params).text
+        return html
+
+    def get_html(self, last_url, params={}, data={}):
         url = self.server_url + last_url
         key = (url, hash(tuple(sorted(params.items()))))
         if key in self.html_sources:
             html, load_time = self.html_sources[key]
             if time.time() - load_time < self.html_obsolescence_time:
+                print("no obsolescence html")
                 return html
         load_time = time.time()
-        html = self.load_html(url, params=params)
+        html = self.load_html(url, params=params, data=data)
         self.html_sources[key] = (html, load_time)
         return html
 
