@@ -9,6 +9,10 @@ class Marketplace(building.Building):
     def __init__(self, village_part, name, id, level):
         building.Building.__init__(self, village_part, name, id, level)
         self.eng_name = 'marketplace'
+        self._max_merchants = 0
+        self._free_merchants = 0
+        self._busy_on_marketplace_merchants = 0
+        self._merchants_in_travel = 0
 
     def get_data(self):
         html = self.village_part.get_html({'id': self.id, 't': 0})
@@ -16,14 +20,30 @@ class Marketplace(building.Building):
         merchants = soup.find_all('div', {'class': 'whereAreMyMerchants'})[0]
         text = merchants.text
         merchants_data = re.findall(r'(\d+)', text)
-        free_merchants = merchants_data[0]
-        max_merchants = merchants_data[1]
-        busy_on_marketplace_merchants = merchants_data[3]
-        merchants_in_travel = merchants_data[4]
-        print(max_merchants)
-        print(free_merchants)
-        print(busy_on_marketplace_merchants)
-        print(merchants_in_travel)
+        self._free_merchants = int(merchants_data[0])
+        self._max_merchants = int(merchants_data[1])
+        self._busy_on_marketplace_merchants = int(merchants_data[3])
+        self._merchants_in_travel = int(merchants_data[4])
+
+    def get_max_merchants(self) -> int:
+        self.get_data()
+        return self._max_merchants
+    max_merchants = property(get_max_merchants)
+
+    def get_free_merchants(self) -> int:
+        self.get_data()
+        return self._free_merchants
+    free_merchants = property(get_free_merchants)
+
+    def get_busy_on_marketplace_merchants(self) -> int:
+        self.get_data()
+        return self._busy_on_marketplace_merchants
+    busy_on_marketplace_merchants = property(get_busy_on_marketplace_merchants)
+
+    def get_merchants_in_travel(self) -> int:
+        self.get_data()
+        return self._merchants_in_travel
+    merchants_in_travel = property(get_merchants_in_travel)
 
     def get_page_amount(self) -> int:
         html = self.village_part.get_html({'id': self.id, 't': 1})
@@ -74,7 +94,7 @@ class Marketplace(building.Building):
             biddings.extend(self.get_page(page))
         return biddings
 
-    def send_resources(self, name_or_pos, res=[0, 0, 0, 0]):
+    def send_resources(self, name_or_pos, res=[0, 0, 0, 0]) -> bool:
         login = self.village_part.village.login
         ajax_token = self.village_part.village.account.ajax_token
         html = self.village_part.get_html({'id': self.id, 't': '5'})

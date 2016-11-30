@@ -3,6 +3,9 @@ import bs4
 
 
 class Building:
+    """
+    Class Building is base class for all buildings in the API.
+    """
     def __init__(self, village_part, name, id, level):
         self.village_part = village_part
         self.name = name

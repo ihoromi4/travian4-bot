@@ -4,6 +4,8 @@ import bs4
 
 from . import buildings
 from .buildings import marketplace
+from .buildings import residence
+from .buildings import palace
 
 
 class InsideVillage:
@@ -13,7 +15,10 @@ class InsideVillage:
         self.id = village.id
         self.buildings = []
         # ---
+        self.main_building = None
         self.marketplace = None
+        self.residence = None
+        self.palace = None
         self.create_buildings()
 
     def get_html(self, params={}):
@@ -33,6 +38,10 @@ class InsideVillage:
             building = building_type(self, name, id, level)
             if building_type is marketplace.Marketplace:
                 self.marketplace = building
+            elif building_type is residence.Residence:
+                self.residence = building
+            elif building_type is palace.Palace:
+                self.palace = building
             self.buildings.append(building)
 
     def get_buildings(self):

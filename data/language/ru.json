@@ -33,12 +33,16 @@
     "cropland" : "Ферма",
     "buildingsite" : "Стройплощадка",
     "marketplace" : "Рынок",
+    "residence" : "Резиденция",
+    "palace" : "Дворец",
 
     "Лесопилка" : "woodcutter",
     "Глиняный карьер" : "claypit",
     "Железный рудник" : "ironmine",
     "Ферма" : "cropland",
     "Стройплощадка" : "buildingsite",
-    "Рынок" : "marketplace"
+    "Рынок" : "marketplace",
+    "Резиденция" : "residence",
+    "Дворец" : "palace"
   }
 }

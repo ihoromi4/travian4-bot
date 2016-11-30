@@ -17,40 +17,79 @@ class LoginError(Exception):
 
 class Login:
     def __init__(self, lang_dir, url, name, password, headers={}):
-        self._language = None
-        self.server_url = url
+        self.url = url
         self.name = name
         self.password = password
-        self.headers = headers
+
         self.session = requests.Session()
+        self.session.headers = headers
+
+        self.timeout = 5.0
         self.relogin_delay = 0.33
         self.reconnections = 3
         self.html_obsolescence_time = 3.0
         self.loggedin = False
         self.html_sources = dict()
+
+        self._language = None
         self._game_version = None
         self.langdata = language.Language("{}{}.json".format(lang_dir, self.language))
 
-    def send_request(self, url, data={}, params={}):
+    def get_headers(self):
+        return self.session.headers
+
+    def set_headers(self, headers):
+        self.session.headers = headers
+    headers = property(get_headers, set_headers)
+
+    def get(self, url, data={}, params={}):
         try:
-            if len(data) == 0:
-                logging.debug('Send get request to url: {}'.format(url))
-                html = self.session.get(url, headers=self.headers, params=params)
-                # html = self.session.request('GET', url, headers=self.headers, data=data, params=params, cookies, allow_redirects=True)
-            else:
-                logging.debug('Send post request to url: {}'.format(url))
-                html = self.session.post(url, headers=self.headers, data=data)
+            logging.debug('Send get request to url: {}'.format(url))
+            response = self.session.get(url, params=params, timeout=self.timeout)
+        except requests.exceptions.ConnectionError:
+            raise
+        except:
+            raise
+        if response:
+            status_code = response.status_code
+            is_redirect = response.is_redirect
+            logging.debug('Response: status_code: {}, is_redirect {}'.format(status_code, is_redirect))
+        else:
+            raise ValueError('response must be not None')
+        return response
+
+    def post(self, url, data={}, params={}):
+        try:
+            logging.debug('Send post request to url: {}'.format(url))
+            response = self.session.post(url, params=params, data=data, timeout=self.timeout)
+        except requests.exceptions.ConnectionError:
+            raise
         except:
             logging.error('Net problem, cant fetch the URL {}'.format(url))
-            print('Net problem, cant fetch the URL' + url)
             raise
-        return html
+        if response:
+            status_code = response.status_code
+            is_redirect = response.is_redirect
+            logging.debug('Response: status_code: {}, is_redirect {}'.format(status_code, is_redirect))
+        else:
+            raise ValueError('response must be not None')
+        return response
+
+    def send_request(self, url, data={}, params={}):
+        if not len(data):
+            response = self.get(url, data=data, params=params)
+        else:
+            response = self.post(url, data=data, params=params)
+        return response
 
     def login(self):
-        print('Start Login')
-        html = self.send_request(self.server_url)
+        logging.debug('Start Login')
+        response = self.get(self.url)
+        if response.status_code != 200:
+            return False
+        html = response.text
         # start parse
-        parser = bs4.BeautifulSoup(html.text, 'html5lib')
+        parser = bs4.BeautifulSoup(html, 'html5lib')
         s1 = parser.find('button', {'name': 's1'})['value'].encode('utf-8')
         login = parser.find('input', {'name': 'login'})['value']
         # start login
@@ -61,39 +100,43 @@ class Login:
             'w': '1366:768',
             'login': login
             }
-        html = self.send_request(self.server_url + '/dorf1.php', data=data)
-        if 'playerName' in html.text:
+        response = self.send_request(self.url + 'dorf1.php', data=data)
+        if response.status_code != 200:
+            return False
+        html = response.text
+        if 'playerName' in html:
             self.loggedin = True
-            print('Login succeed!')
+            logging.debug('Login succeed')
             return True
         self.loggedin = False
-        print('Login fail!')
+        logging.debug('Login fail')
         return False
 
     def load_html(self, url, params={}, data={}):
         if not self.loggedin:
             if not self.login():
-                raise LoginError("Something is wrong.")
+                logging.debug('Can\'t login. Something is wrong.')
+                raise LoginError('Can\'t login. Something is wrong.')
         html = self.send_request(url, data=data, params=params).text
         if 'playerName' not in html:
             self.loggedin = False
-            print('Suddenly logged off')
+            logging.debug('Suddenly logged off')
             for i in range(self.reconnections):
                 if self.login():
                     html = self.send_request(url, data=data, params=params).text
                     return html
                 else:
-                    print(('Could not relogin %d time' % (self.reconnections-i)))
+                    logging.debug('Could not relogin %d time' % (self.reconnections-i))
                     time.sleep(self.relogin_delay)
         return html
 
     def get_ajax(self, last_url, params={}, data={}):
-        url = self.server_url + last_url
+        url = self.url + last_url
         html = self.send_request(url, data=data, params=params).text
         return html
 
     def get_html(self, last_url, params={}, data={}):
-        url = self.server_url + last_url
+        url = self.url + last_url
         key = (url, hash(tuple(sorted(params.items()))))
         if key in self.html_sources:
             html, load_time = self.html_sources[key]
@@ -139,4 +182,4 @@ class Login:
         return self._language
     language = property(get_language)
 
-logging.debug('Start loading travlib/loging.py')
+logging.debug('End loading travlib/loging.py')
