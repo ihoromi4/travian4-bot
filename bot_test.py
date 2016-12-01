@@ -22,10 +22,6 @@ print('Server language:', logn.language)
 
 account_ = account.Account(logn)
 
-village1 = account_.villages[0]
-village2 = account_.villages[1]
-village3 = account_.villages[2]
-resipalace = village2.inside.residence or village2.inside.palace
-print(resipalace)
-resipalace.get_data()
-print(resipalace.culture)
+village1 = account_.get_village_by_name('3.Сахар')
+print(village1.name)
+print(village1.builds)

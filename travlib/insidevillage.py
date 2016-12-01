@@ -24,6 +24,12 @@ class InsideVillage:
     def get_html(self, params={}):
         return self.village.get_html("build.php", params=params)
 
+    def get_building_by_id(self, id: int):
+        for build in self.buildings:
+            if build.id == id:
+                return build
+        return None
+
     def start_build(self, building_id, c):
         self.village.get_html('dorf2.php', {'a': building_id, 'c': c})
 
@@ -58,7 +64,7 @@ class InsideVillage:
                 id = re.findall(r'id=(\d+)', building['href'])[0]
             else:
                 name, level = re.findall(r'(\b.+\b) <span class="level">\b\S+\b (\d+)</span>', alt)[0]
-                id = re.findall(r'id=(\d+)', building['href'])[0]
+                id = int(re.findall(r'id=(\d+)', building['href'])[0])
             building_dict['name'] = name
             building_dict['level'] = level
             building_dict['id'] = id

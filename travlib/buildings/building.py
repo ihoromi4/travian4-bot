@@ -6,7 +6,7 @@ class Building:
     """
     Class Building is base class for all buildings in the API.
     """
-    def __init__(self, village_part, name, id, level):
+    def __init__(self, village_part, name: str, id: int, level: int):
         self.village_part = village_part
         self.name = name
         self.id = id

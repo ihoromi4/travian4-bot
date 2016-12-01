@@ -90,3 +90,9 @@ class Account:
                 positions.append(position)
         return positions
     villages_positions = property(get_villages_positions)
+
+    def get_village_by_name(self, name: str):
+        for village in self.villages:
+            if village.name == name:
+                return village
+        return None

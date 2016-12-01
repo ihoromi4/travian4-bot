@@ -17,6 +17,12 @@ class OutsideVillage:
     def get_html(self, params={}):
         return self.village.get_html("build.php", params=params)
 
+    def get_building_by_id(self, id: int):
+        for build in self.resource_fields:
+            if build.id == id:
+                return build
+        return None
+
     def start_build(self, building_id, c):
         self.village.get_html('dorf1.php', {'a': building_id, 'c': c})
 
@@ -41,6 +47,6 @@ class OutsideVillage:
         for field in fields_data:
             field_dict = dict()
             field_dict['name'], field_dict['level'] = re.findall(r'(.+) \b\S+\b (\d+)', field['alt'])[0]
-            field_dict['id'] = re.findall(r'id=(\d+)', field['href'])[0]
+            field_dict['id'] = int(re.findall(r'id=(\d+)', field['href'])[0])
             resource_fields.append(field_dict)
         return resource_fields

@@ -1,4 +1,5 @@
 import re
+import bs4
 
 from . import outsidevillage
 from . import insidevillage
@@ -57,7 +58,20 @@ class Village:
     production = property(get_production)
 
     def get_builds(self) -> list:
-        html_text = self.login.load_dorf1(self.id)
+        html = self.login.load_dorf1(self.id)
+        # soup = bs4.BeautifulSoup(html, 'html5lib')
+        # build_list = soup.find('div', {'class': 'boxes buildingList'})
+        # building_data = build_list.find_all('div', {'class': 'name'})
+        # building_names = list(map(lambda x: x.contents[0].strip(), building_data))
+        # time_data = build_list.find_all('div', {'class': 'buildDuration'})
+        # time_end = list(map(lambda x: re.findall(r'.*(\d\+\d+)', x.contents[2])[0], time_data))
+        # print(building_names)
+        # print(time_end)
         pattern = r'<div class="name">\s*\b(.*)\b\s*<span class="lvl">Уровень (\d*)</span>\s*</div>'
-        builds = re.findall(pattern, html_text)
+        builds = re.findall(pattern, html)
         return builds
+    builds = property(get_builds)
+
+    def get_building_by_id(self, id: int):
+        return self.inside.get_building_by_id(id) or \
+                self.outside.get_building_by_id(id)
