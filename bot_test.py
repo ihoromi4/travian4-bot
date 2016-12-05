@@ -22,6 +22,8 @@ print('Server language:', logn.language)
 
 account_ = account.Account(logn)
 
-village1 = account_.get_village_by_name('3.Сахар')
-print(village1.name)
-print(village1.builds)
+print(account_.gold)
+print(account_.silver)
+# village1 = account_.get_village_by_name('3.Сахар')
+# print(village1.name)
+# print(village1.builds)

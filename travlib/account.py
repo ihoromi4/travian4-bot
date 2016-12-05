@@ -1,9 +1,11 @@
 import re
 
+import bs4
+
 from .village import Village
 from . import buildings
 
-NATIONS = ['gauls', 'romans', 'teutons']
+NATIONS = ['romans', 'teutons', 'gauls']
 
 RESOURCE_TYPES = ['lumber', 'clay', 'iron', 'crop']
 LUMBER = 0
@@ -17,7 +19,7 @@ class Account:
         self.login = login
         self.langdata = login.langdata
         self._villages = {}  # id: village
-        self.nation = NATIONS[self.get_nation_id()]
+        self.nation = NATIONS[self.nation_id-1]
         self.update_villages()
 
     def get_nation_id(self):
@@ -25,6 +27,7 @@ class Account:
         nation_compile = re.compile('nation(\d)')
         nation = nation_compile.findall(html)[0]
         return int(nation)
+    nation_id = property(get_nation_id)
 
     def get_village_ids(self):
         html = self.login.get_html("dorf1.php")
@@ -96,3 +99,21 @@ class Account:
             if village.name == name:
                 return village
         return None
+
+    def get_gold(self):
+        html = self.login.get_html("dorf1.php")
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        gold_silver_cintainer = soup.find('div', {'id': 'goldSilverContainer'})
+        gold_container = gold_silver_cintainer.find('div', {'class': 'gold'})
+        gold_span = gold_container.find('span', {'class': 'ajaxReplaceableGoldAmount'})
+        return int(gold_span.text)
+    gold = property(get_gold)
+
+    def get_silver(self):
+        html = self.login.get_html("dorf1.php")
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        gold_silver_cintainer = soup.find('div', {'id': 'goldSilverContainer'})
+        silver_container = gold_silver_cintainer.find('div', {'class': 'silver'})
+        silver_span = silver_container.find('span', {'class': 'ajaxReplaceableSilverAmount'})
+        return int(silver_span.text)
+    silver = property(get_silver)
