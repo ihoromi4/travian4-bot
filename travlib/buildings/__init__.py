@@ -3,6 +3,7 @@ from . import resourcefield
 from . import marketplace
 from . import residence
 from . import palace
+from . import townhall
 
 building_dict = {
     "woodcutter": resourcefield.ResourceField,
@@ -11,7 +12,8 @@ building_dict = {
     "cropland": resourcefield.ResourceField,
     "marketplace": marketplace.Marketplace,
     "residence": residence.Residence,
-    "palace": palace.Palace
+    "palace": palace.Palace,
+    "townhall": townhall.TownHall
 }
 
 

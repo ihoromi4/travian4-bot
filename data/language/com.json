@@ -1,1 +1,50 @@
-{}
+{
+  "resources" : {
+    "lumber" : "Lumber",
+    "clay" : "Clay",
+    "iron" : "Iron",
+    "crop" : "Crop",
+
+    "Lumber" : "lumber",
+    "Clay" : "clay",
+    "Iron" : "crop",
+    "Crop" : "crop"
+  },
+  "resources-id" : {
+    "lumber" : 0,
+    "clay" : 1,
+    "iron" : 2,
+    "crop" : 3,
+
+    "Древесина" : 0,
+    "Глина" : 1,
+    "Железо" : 2,
+    "Зерно" : 3,
+
+    "0" : "Lumber",
+    "1" : "Clay",
+    "2" : "Iron",
+    "3" : "Crop"
+  },
+  "buildings" : {
+    "woodcutter" : "Woodcutter",
+    "claypit" : "Clay Pit",
+    "ironmine" : "Iron Mine",
+    "cropland" : "Cropland",
+    "buildingsite" : "Building site",
+    "marketplace" : "Marketplace",
+    "residence" : "Residence",
+    "palace" : "Palace",
+    "townhall" : "Town Hall",
+
+    "Woodcutter" : "woodcutter",
+    "Clay Pit" : "claypit",
+    "Iron Mine" : "ironmine",
+    "Cropland" : "cropland",
+    "Building site" : "buildingsite",
+    "Marketplace" : "marketplace",
+    "Residence" : "residence",
+    "Palace" : "palace",
+    "Town Hall" : "townhall"
+  }
+}

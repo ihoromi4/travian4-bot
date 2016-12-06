@@ -35,6 +35,7 @@
     "marketplace" : "Рынок",
     "residence" : "Резиденция",
     "palace" : "Дворец",
+    "townhall" : "Ратуша",
 
     "Лесопилка" : "woodcutter",
     "Глиняный карьер" : "claypit",
@@ -43,6 +44,7 @@
     "Стройплощадка" : "buildingsite",
     "Рынок" : "marketplace",
     "Резиденция" : "residence",
-    "Дворец" : "palace"
+    "Дворец" : "palace",
+    "Ратуша" : "townhall"
   }
 }

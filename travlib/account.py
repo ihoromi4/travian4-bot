@@ -29,20 +29,12 @@ class Account:
         return int(nation)
     nation_id = property(get_nation_id)
 
-    def get_village_ids(self):
-        html = self.login.get_html("dorf1.php")
-        pattern = r'<a  href="\?newdid=(\d+)&amp;"'
-        village_village_ids_compile = re.compile(pattern)
-        village_village_ids = village_village_ids_compile.findall(html)
-        village_village_ids = [int(id) for id in village_village_ids]
-        return village_village_ids
-
     def update_villages(self):
-        village_ids = self.get_village_ids()
-        village_positions = self.get_villages_positions()
-        for id in village_ids:
+        villages_data = self.read_villages_data()
+        for vdata in villages_data:
+            id = vdata['id']
+            pos = vdata['coords']
             if id not in self._villages:
-                pos = village_positions[village_ids.index(id)]
                 village = Village(self, id, pos)
                 self._villages[id] = village
 
@@ -71,28 +63,64 @@ class Account:
         return ajax_token
     ajax_token = property(get_ajax_token)
 
-    def get_villages_positions(self):
+    def read_villages_data(self):
         html = self.login.get_html("dorf1.php")
-        pattern = r'coordinateX">\(&#x202d;&(#45;)*&*#x202d;(\d+)'
-        x_compile = re.compile(pattern)
-        x = x_compile.findall(html)
-        pattern = r'coordinateY">&#x202d;&(#45;)*&*#x202d;(\d+)'
-        y_compile = re.compile(pattern)
-        y = y_compile.findall(html)
-        positions = []
-        for i in range(len(x)):
-            position = [0, 0]
-            if '#45' in x[i][0]:
-                position[0] = -int(x[i][1])
-            else:
-                position[0] = int(x[i][1])
-            if '#45' in y[i][0]:
-                position[1] = -int(y[i][1])
-            else:
-                position[1] = int(y[i][1])
-                positions.append(position)
-        return positions
-    villages_positions = property(get_villages_positions)
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        div = soup.find('div', {'id': 'sidebarBoxVillagelist'})
+        inner_box = div.find('div', {'class': 'innerBox content'})
+        all_li = inner_box.find_all('li')
+        villages_data = []
+        for li in all_li:
+            village = {}
+            href = li.find('a')['href']
+            id = int(re.findall(r'id=(\d+)&', href)[0])
+            village['id'] = id
+
+            div_name = li.find('div', {'class': 'name'})
+            name = div_name.text
+            village['name'] = name
+
+            strip = lambda x: x.replace('\u202d', '').replace('\u202c', '').strip('()')
+            span_x = li.find('span', {'class': 'coordinateX'})
+            x = int(strip(span_x.text))
+            span_y = li.find('span', {'class': 'coordinateY'})
+            y = int(strip(span_y.text))
+            village['coords'] = (x, y)
+            villages_data.append(village)
+        return villages_data
+
+    def read_spieler(self):
+        html = self.login.get_html("spieler.php")
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        table = soup.find('table', {'id': 'villages'})
+        table_body = table.find('tbody')
+        all_tr = table_body.find_all('tr')
+        villages_data = []
+        for tr in all_tr:
+            village = {}
+            name_td = tr.find('td', {'class': 'name'})
+            name_a = name_td.find('a')
+            village_name = name_a.text
+            village['name'] = village_name
+            name_span_capital = name_td.find('span', {'class': 'mainVillage'})
+            is_capital = bool(name_span_capital)
+            village['is_capital'] = is_capital
+
+            oases_td = tr.find('td', {'class': 'oases merged'})
+
+            inhabitants_td = tr.find('td', {'class': 'inhabitants'})
+            inhabitants = int(inhabitants_td.text)
+            village['inhabitants'] = inhabitants
+
+            coords_td = tr.find('td', {'class': 'coords'})
+            span_x = coords_td.find('span', {'class': 'coordinateX'})
+            strip = lambda x: x.replace('\u202d', '').replace('\u202c', '').strip('()')
+            x = int(strip(span_x.text))
+            span_y = coords_td.find('span', {'class': 'coordinateY'})
+            y = int(strip(span_y.text))
+            village['coords'] = (x, y)
+            villages_data.append(village)
+        return villages_data
 
     def get_village_by_name(self, name: str):
         for village in self.villages:
