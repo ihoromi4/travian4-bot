@@ -57,18 +57,26 @@ class Village:
         return production
     production = property(get_production)
 
-    def get_builds(self) -> list:
+    def get_free_crop(self):
         html = self.login.load_dorf1(self.id)
-        # soup = bs4.BeautifulSoup(html, 'html5lib')
-        # build_list = soup.find('div', {'class': 'boxes buildingList'})
-        # building_data = build_list.find_all('div', {'class': 'name'})
-        # building_names = list(map(lambda x: x.contents[0].strip(), building_data))
-        # time_data = build_list.find_all('div', {'class': 'buildDuration'})
-        # time_end = list(map(lambda x: re.findall(r'.*(\d\+\d+)', x.contents[2])[0], time_data))
-        # print(building_names)
-        # print(time_end)
-        pattern = r'<div class="name">\s*\b(.*)\b\s*<span class="lvl">Уровень (\d*)</span>\s*</div>'
-        builds = re.findall(pattern, html)
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        span_free_crop = soup.find('span', {'id': 'stockBarFreeCrop'})
+        free_crop = int(span_free_crop.text)
+        return free_crop
+    free_crop = property(get_free_crop)
+
+    def get_builds(self) -> list:
+        builds = []
+        resource_fields_list = self.outside.read_resource_fields()
+        for rf in resource_fields_list:
+            if rf['is_build']:
+                building = self.outside.get_building_by_id(rf['id'])
+                builds.append(building)
+        building_list = self.inside.read_buildings()
+        for b in building_list:
+            if b['is_build']:
+                building = self.inside.get_building_by_id(b['id'])
+                builds.append(building)
         return builds
     builds = property(get_builds)
 

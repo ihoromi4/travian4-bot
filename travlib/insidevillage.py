@@ -8,6 +8,7 @@ from .buildings import residence
 from .buildings import palace
 from .buildings import townhall
 
+
 class InsideVillage:
     def __init__(self, village):
         self.village = village

@@ -11,14 +11,14 @@ class OutsideVillage:
         self.village = village
         self.login = village.login
         self.id = village.id
-        self.resource_fields = []
+        self.buildings = []
         self.create_resource_fields()
 
     def get_html(self, params={}):
         return self.village.get_html("build.php", params=params)
 
     def get_building_by_id(self, id: int):
-        for build in self.resource_fields:
+        for build in self.buildings:
             if build.id == id:
                 return build
         return None
@@ -35,7 +35,7 @@ class OutsideVillage:
             repr = self.village.account.langdata.data["buildings"].get(name, "")
             building_type = buildings.get_building_type(repr)
             field = building_type(self, name, id, level)
-            self.resource_fields.append(field)
+            self.buildings.append(field)
 
     def get_resource_fields(self):
         html = self.login.load_dorf1(self.id)

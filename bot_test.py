@@ -2,7 +2,8 @@ import configparser
 
 from travlib import login
 from travlib import account
-from travlib import language
+
+from travlib.buildings import resourcefield
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -29,5 +30,21 @@ account_ = account.Account(logn)
 
 village = account_.villages[0]
 print(village.name)
-# village.outside.resource_fields[0].build()
-# print(village1.builds)
+print(village.free_crop)
+
+import time
+import random
+
+while True:
+    if not village.builds:
+        if village.free_crop >= 5:
+            for building in village.outside.buildings:
+                if building.level == 2 and not type(building) is resourcefield.Cropland:
+                    building.build()
+                    break
+        else:
+            for building in village.outside.buildings:
+                if building.level == 1 and type(building) is resourcefield.Cropland:
+                    building.build()
+                    break
+    time.sleep(60 + 60 * random.random())

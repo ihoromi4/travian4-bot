@@ -6,10 +6,10 @@ from . import palace
 from . import townhall
 
 building_dict = {
-    "woodcutter": resourcefield.ResourceField,
-    "claypit": resourcefield.ResourceField,
-    "ironmine": resourcefield.ResourceField,
-    "cropland": resourcefield.ResourceField,
+    "woodcutter": resourcefield.Woodcutter,
+    "claypit": resourcefield.Claypit,
+    "ironmine": resourcefield.Ironmine,
+    "cropland": resourcefield.Cropland,
     "marketplace": marketplace.Marketplace,
     "residence": residence.Residence,
     "palace": palace.Palace,

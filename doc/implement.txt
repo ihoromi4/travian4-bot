@@ -6,9 +6,11 @@
     if 'playerName' not in html.text:
         pass
 
+
 - Как единообразно управлять объектами, которые различно называются на разных серверах?
 В отдельном файле хранится таблица соответствий названий на разлиячных языках к внутреннему представлению.
 API незаметно для пользователя определяет соответсвия и при необходимости производит замену.
+
 
 - Как отправляются ресурсы через рынок?
 Делаем GET запрос build.php для рынка в деревне из которой собираемся отправлять
@@ -21,3 +23,43 @@ API незаметно для пользователя определяет со
     kid: "247029", c: "78d586", x2: "1", r1, r2, r3, r4
     ajaxToken: "..."
 Если все прошло успешно, то ресурсы отправлены.
+
+
+- Как быть с различными языками?
+Есть подозрение, что для различных языков структура страницы игры остается той же.
+Так же возможно найти соответствие слов в игровой странице.
+Например:
+    из dorf1.php
+<img class="warehouse" src="img/x.gif" alt="Склад" /> - из русской игры
+<img class="warehouse" src="img/x.gif" alt="Warehouse" /> - из английской
+из этой информации можем извлечь соответствие слова "склад" ко всем языкам
+внутреннее представления слова "склад" - "warehouse"
+
+Другие объекты .com:
+<img class="res r1Big" src="img/x.gif" alt="Lumber"/>
+<img class="res r1Big" src="img/x.gif" alt="Древесина"/>
+
+<img class="res r2Big" src="img/x.gif" alt="Clay"/>
+<img class="res r2Big" src="img/x.gif" alt="Глина"/>
+
+<img class="res r3Big" src="img/x.gif" alt="Железо"/>
+<img class="res r3Big" src="img/x.gif" alt="Iron"/>
+
+<img class="granary" src="img/x.gif" alt="Амбар" />
+<img class="granary" src="img/x.gif" alt="Granary" />
+
+<img class="res r4Big" src="img/x.gif" alt="Зерно"/>
+<img class="res r4Big" src="img/x.gif" alt="Crop"/>
+
+<img class="res r5Big" src="img/x.gif" alt="Free crop"/>
+<img class="res r5Big" src="img/x.gif" alt="Потребление зерна"/>
+
+Разным зданиям соответствуют разные g<n>:
+<img class="big white g15" alt="Main Building" src="img/x.gif"/>
+<img class="big white g15" alt="Главное здание" src="img/x.gif"/>
+названиям зданий на иностранном языке соответствует число
+
+<img class="r2" src="img/x.gif" alt="Clay" />
+
+<img class="r5" src="img/x.gif" alt="Free crop" />
+
