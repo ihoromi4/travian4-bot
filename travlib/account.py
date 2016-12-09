@@ -2,8 +2,7 @@ import re
 
 import bs4
 
-from .village import Village
-from . import buildings
+from .village import village
 
 NATIONS = ['romans', 'teutons', 'gauls']
 
@@ -35,10 +34,10 @@ class Account:
             id = vdata['id']
             pos = vdata['coords']
             if id not in self._villages:
-                village = Village(self, id, pos)
-                self._villages[id] = village
+                villg = village.Village(self, id, pos)
+                self._villages[id] = villg
 
-    def get_villages(self) -> Village:
+    def get_villages(self) -> village.Village:
         return list(self._villages.values())
     villages = property(get_villages)
 

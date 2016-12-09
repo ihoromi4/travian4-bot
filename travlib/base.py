@@ -18,10 +18,10 @@ def call_limiter(period):
 
 if __name__ == '__main__':
     class A:
-    @call_limiter(1)
-    def a(self):
-        print('call a')
-        return time.time()
+        @call_limiter(1)
+        def a(self):
+            print('call a')
+            return time.time()
 
     a = A()
     print(a.a)

@@ -3,7 +3,6 @@ import re
 import bs4
 
 from . import buildings
-from .buildings import resourcefield
 
 
 class OutsideVillage:

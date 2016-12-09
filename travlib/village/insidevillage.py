@@ -1,11 +1,11 @@
 import re
 
 import bs4
+from .buildings import marketplace
+from .buildings import palace
+from .buildings import residence
 
 from . import buildings
-from .buildings import marketplace
-from .buildings import residence
-from .buildings import palace
 from .buildings import townhall
 
 

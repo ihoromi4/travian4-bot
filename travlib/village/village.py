@@ -1,8 +1,10 @@
 import re
+
 import bs4
 
 from . import outsidevillage
 from . import insidevillage
+from . import buildbox
 
 
 class Village:
@@ -14,6 +16,7 @@ class Village:
         # ---
         self.outside = outsidevillage.OutsideVillage(self)
         self.inside = insidevillage.InsideVillage(self)
+        self.builds = buildbox.BuildBox(self)
 
     def get_html(self, last_url='', params={}):
         params['newdid'] = self.id
@@ -64,45 +67,6 @@ class Village:
         free_crop = int(span_free_crop.text)
         return free_crop
     free_crop = property(get_free_crop)
-
-    def get_builds(self) -> list:
-        builds = []
-        resource_fields_list = self.outside.read_resource_fields()
-        for rf in resource_fields_list:
-            if rf['is_build']:
-                building = self.outside.get_building_by_id(rf['id'])
-                builds.append(building)
-        building_list = self.inside.read_buildings()
-        for b in building_list:
-            if b['is_build']:
-                building = self.inside.get_building_by_id(b['id'])
-                builds.append(building)
-        return builds
-    builds = property(get_builds)
-
-    def read_builds(self):
-        html = self.login.load_dorf1(self.id)
-        soup = bs4.BeautifulSoup(html, 'html5lib')
-        building_list = soup.find('div', {'class': 'boxes buildingList'})
-        ul = building_list.find('ul')
-        all_li = ul.find_all('li')
-        builds = []
-        for li in all_li:
-            build = {}
-            div_name = li.find('div', {'class': 'name'})
-            name = div_name.contents[0].strip()
-            span_level = li.find('span', {'class': 'lvl'})
-            level = int(re.findall(r' (\d+)', span_level.text)[0])
-            div_duration = li.find('div', {'class': 'buildDuration'})
-            duration = re.findall(r'(\d+:\d\d:\d\d)', div_duration.text)[0]
-            time = re.findall(r' (\d+:\d\d)', div_duration.text)[0]
-            print(name, level, duration, time)
-            build['name'] = name
-            build['level'] = level
-            build['duration'] = duration
-            build['time'] = time
-            builds.append(build)
-        return builds
 
     def get_building_by_id(self, id: int):
         return self.inside.get_building_by_id(id) or \

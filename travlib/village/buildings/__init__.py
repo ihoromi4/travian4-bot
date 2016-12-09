@@ -1,8 +1,8 @@
 from . import building
-from . import resourcefield
 from . import marketplace
-from . import residence
 from . import palace
+from . import residence
+from . import resourcefield
 from . import townhall
 
 building_dict = {
