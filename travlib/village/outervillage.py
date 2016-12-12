@@ -5,7 +5,7 @@ import bs4
 from . import buildings
 
 
-class OutsideVillage:
+class OuterVillage:
     def __init__(self, village):
         self.village = village
         self.login = village.login
@@ -31,7 +31,7 @@ class OutsideVillage:
             name = field_info['name']
             id = field_info['id']
             level = field_info['level']
-            repr = self.village.account.langdata.data["buildings"].get(name, "")
+            repr = self.village.account.language.data["buildings"].get(name, "")
             building_type = buildings.get_building_type(repr)
             field = building_type(self, name, id, level)
             self.buildings.append(field)

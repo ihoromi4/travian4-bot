@@ -16,13 +16,14 @@ class LoginError(Exception):
 
 
 class Login:
-    def __init__(self, lang_dir, url, name, password, headers={}):
+    def __init__(self, url, name, password, headers={}, lang_dir='data/language/'):
         self.url = url
         self.name = name
         self.password = password
+        self.__headers = headers
 
-        self.session = requests.Session()
-        self.session.headers = headers
+        self.session = None
+        self.new_session()
 
         self.timeout = 5.0
         self.relogin_delay = 0.33
@@ -31,14 +32,21 @@ class Login:
         self.loggedin = False
         self.html_sources = dict()
 
-        self._language = None
-        self._game_version = None
-        self.langdata = language.Language("{}{}.json".format(lang_dir, self.language))
+        self.__server_language = None
+        self.__game_version = None
+        self.language = language.Language("{}{}.json".format(lang_dir, self.server_language))
+
+    def new_session(self):
+        if self.session:
+            self.session.close()
+        self.session = requests.Session()
+        self.session.headers = self.__headers
 
     def get_headers(self):
-        return self.session.headers
+        return self.__headers
 
     def set_headers(self, headers):
+        self.__headers = headers
         self.session.headers = headers
     headers = property(get_headers, set_headers)
 
@@ -155,7 +163,7 @@ class Login:
         return self.get_html('dorf2.php?newdid={}&'.format(village_id))
 
     def get_game_version(self):
-        if not self._game_version:
+        if not self.__game_version:
             html = self.get_html('dorf1.php')
             pattern = r"Travian.Game.version = '([.\d]*)';"
             regex = re.compile(pattern)
@@ -166,20 +174,20 @@ class Login:
                 game_version = float(results[0])
             except ValueError:
                 raise ValueError("Bad parsing pattern!")
-            self._game_version = game_version
-        return self._game_version
+            self.__game_version = game_version
+        return self.__game_version
     game_version = property(get_game_version)
 
-    def get_language(self):
-        if not self._language:
+    def get_server_language(self):
+        if not self.__server_language:
             html = self.get_html('dorf1.php')
             pattern = r"Travian.Game.worldId = '(\D+)\d+';"
             regex = re.compile(pattern)
             results = regex.findall(html)
             if not results:
                 raise TypeError("It is not travian page!")
-            self._language = results[0]
-        return self._language
-    language = property(get_language)
+            self.__server_language = results[0]
+        return self.__server_language
+    server_language = property(get_server_language)
 
 logging.debug('End loading travlib/loging.py')

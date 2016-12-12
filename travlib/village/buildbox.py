@@ -22,19 +22,27 @@ class BuildBox:
         self.update_orders()
         return list.__repr__(self.__orders)
 
+    def __bool__(self):
+        self.update_orders()
+        return bool(self.__orders)
+
+    def __len__(self):
+        self.update_orders()
+        return len(self.__orders)
+
     def _load_build_buildings(self) -> list:
-        outside = self.__village.outside
-        inside = self.__village.inside
+        outer = self.__village.outer
+        inner = self.__village.inner
         builds = []
-        resource_fields_list = outside.read_resource_fields()
+        resource_fields_list = outer.read_resource_fields()
         for rf in resource_fields_list:
             if rf['is_build']:
-                building = outside.get_building_by_id(rf['id'])
+                building = outer.get_building_by_id(rf['id'])
                 builds.append(building)
-        building_list = inside.read_buildings()
+        building_list = inner._parse_dorf2_village_map()
         for b in building_list:
             if b['is_build']:
-                building = inside.get_building_by_id(b['id'])
+                building = inner.get_building_by_id(b['id'])
                 builds.append(building)
         return builds
 

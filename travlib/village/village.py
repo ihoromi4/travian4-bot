@@ -2,8 +2,8 @@ import re
 
 import bs4
 
-from . import outsidevillage
-from . import insidevillage
+from . import outervillage
+from . import innervillage
 from . import buildbox
 
 
@@ -14,11 +14,11 @@ class Village:
         self.id = id
         self.pos = tuple(pos)
         # ---
-        self.outside = outsidevillage.OutsideVillage(self)
-        self.inside = insidevillage.InsideVillage(self)
+        self.outer = outervillage.OuterVillage(self)
+        self.inner = innervillage.InnerVillage(self)
         self.builds = buildbox.BuildBox(self)
 
-    def get_html(self, last_url='', params={}):
+    def get_html(self, last_url='', params={}) -> str:
         params['newdid'] = self.id
         return self.login.get_html(last_url, params=params)
 
@@ -60,7 +60,7 @@ class Village:
         return production
     production = property(get_production)
 
-    def get_free_crop(self):
+    def get_free_crop(self) -> int:
         html = self.login.load_dorf1(self.id)
         soup = bs4.BeautifulSoup(html, 'html5lib')
         span_free_crop = soup.find('span', {'id': 'stockBarFreeCrop'})
@@ -69,5 +69,5 @@ class Village:
     free_crop = property(get_free_crop)
 
     def get_building_by_id(self, id: int):
-        return self.inside.get_building_by_id(id) or \
-                self.outside.get_building_by_id(id)
+        return self.inner.get_building_by_id(id) or \
+                self.outer.get_building_by_id(id)

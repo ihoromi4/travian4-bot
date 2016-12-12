@@ -10,17 +10,22 @@ class Building:
         self.village_part = village_part
         self.name = name
         self.id = id
-        self._level = level
-        self.eng_name = ''
+        self.level = level
+        self.inner_repr = ''
+        self.cost_for_upgrading = [0, 0, 0, 0]
+        self.time_for_upgrading = 0
+        self.is_build = False
+        self.is_top_level = False
 
-    def get_level(self):
+    def update(self):
+        self.village_part._update_buildings()
+
+    def update_level(self):
         html = self.village_part.get_html({'id': self.id})
         soup = bs4.BeautifulSoup(html, 'html5lib')
         span_level = soup.find('span', {'class': 'level'})
         level = int(re.findall(r' (\d+)', span_level.text)[0])
-        self._level = level
-        return level
-    level = property(get_level)
+        self.level = level
 
     def get_build_index(self):
         html = self.village_part.get_html({'id': self.id})
@@ -48,3 +53,9 @@ class Building:
         print('Start Building on Village ' + str(self.village_part.id) + ' field ' + str(self.id))
         c = result.group(0)
         self.village_part.start_build(self.id, c)
+
+    def upgrade(self):
+        self.build()
+
+    def downgrade(self):
+        self.village_part.downgrade(self)

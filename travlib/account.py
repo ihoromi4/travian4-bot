@@ -2,6 +2,8 @@ import re
 
 import bs4
 
+from . import login
+from .event import eventmachine
 from .village import village
 
 NATIONS = ['romans', 'teutons', 'gauls']
@@ -13,13 +15,12 @@ IRON = 2
 CROP = 3
 
 
-class Account:
-    def __init__(self, login):
-        self.login = login
-        self.langdata = login.langdata
-        self._villages = {}  # id: village
+class Account(eventmachine.EventMachine):
+    def __init__(self, url, name, password, headers={}):
+        self.login = login.Login(url, name, password, headers)
+        self.language = self.login.language
+        self.__villages = {}  # id: village
         self.nation = NATIONS[self.nation_id-1]
-        self.update_villages()
 
     def get_nation_id(self):
         html = self.login.get_html("dorf1.php")
@@ -29,28 +30,26 @@ class Account:
     nation_id = property(get_nation_id)
 
     def update_villages(self):
-        villages_data = self.read_villages_data()
+        villages_data = self._load_villages_data()
         for vdata in villages_data:
             id = vdata['id']
             pos = vdata['coords']
-            if id not in self._villages:
-                villg = village.Village(self, id, pos)
-                self._villages[id] = villg
+            if id not in self.__villages:
+                vil = village.Village(self, id, pos)
+                self.__villages[id] = vil
 
     def get_villages(self) -> village.Village:
-        return list(self._villages.values())
+        self.update_villages()
+        return list(self.__villages.values())
     villages = property(get_villages)
 
-    def get_villages_amount(self):
+    def get_villages_amount(self) -> int:
         self.update_villages()
-        return len(self._villages)
+        return len(self.__villages)
     villages_amount = property(get_villages_amount)
 
-    def get_villages_names(self):
-        html = self.login.get_html("dorf1.php")
-        pattern = r'<div class="name">(.*)</div>'
-        regex = re.compile(pattern)
-        names = regex.findall(html)
+    def get_villages_names(self) -> list:
+        names = [self.__villages[id].name for id in self.__villages]
         return names
     villages_names = property(get_villages_names)
 
@@ -62,7 +61,7 @@ class Account:
         return ajax_token
     ajax_token = property(get_ajax_token)
 
-    def read_villages_data(self):
+    def _load_villages_data(self):
         html = self.login.get_html("dorf1.php")
         soup = bs4.BeautifulSoup(html, 'html5lib')
         div = soup.find('div', {'id': 'sidebarBoxVillagelist'})
@@ -139,8 +138,8 @@ class Account:
     def get_silver(self):
         html = self.login.get_html("dorf1.php")
         soup = bs4.BeautifulSoup(html, 'html5lib')
-        gold_silver_cintainer = soup.find('div', {'id': 'goldSilverContainer'})
-        silver_container = gold_silver_cintainer.find('div', {'class': 'silver'})
+        gold_silver_container = soup.find('div', {'id': 'goldSilverContainer'})
+        silver_container = gold_silver_container.find('div', {'class': 'silver'})
         silver_span = silver_container.find('span', {'class': 'ajaxReplaceableSilverAmount'})
         return int(silver_span.text)
     silver = property(get_silver)
