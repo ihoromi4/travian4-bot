@@ -10,11 +10,16 @@ class OuterVillage:
         self.village = village
         self.login = village.login
         self.id = village.id
-        self.buildings = []
-        self.create_resource_fields()
+        self._buildings = {}
+        self.__create_resource_fields()
 
     def get_html(self, params={}):
         return self.village.get_html("build.php", params=params)
+
+    def get_buildings(self):
+        self._update_buildings()
+        return list(self._buildings.values())
+    buildings = property(get_buildings)
 
     def get_building_by_id(self, id: int):
         for build in self.buildings:
@@ -25,8 +30,8 @@ class OuterVillage:
     def start_build(self, building_id, c):
         self.village.get_html('dorf1.php', {'a': building_id, 'c': c})
 
-    def create_resource_fields(self):
-        resource_fields = self.read_resource_fields()
+    def __create_resource_fields(self):
+        resource_fields = self._parse_dorf1()
         for field_info in resource_fields:
             name = field_info['name']
             id = field_info['id']
@@ -34,7 +39,17 @@ class OuterVillage:
             repr = self.village.account.language.data["buildings"].get(name, "")
             building_type = buildings.get_building_type(repr)
             field = building_type(self, name, id, level)
-            self.buildings.append(field)
+            self._buildings[id] = field
+
+    def _update_buildings(self):
+        info = self._parse_dorf1()
+        for field_info in info:
+            id = field_info['id']
+            building = self._buildings[id]
+            building.level = field_info['level']
+            building.cost_for_upgrading = field_info['resources_to_build']
+            building.is_build = field_info['is_build']
+            building.is_top_level = field_info['is_top_level']
 
     def get_resource_fields(self):
         html = self.login.load_dorf1(self.id)
@@ -50,7 +65,7 @@ class OuterVillage:
             resource_fields.append(field_dict)
         return resource_fields
 
-    def read_resource_fields(self):
+    def _parse_dorf1(self):
         html = self.login.load_dorf1(self.id)
         soup = bs4.BeautifulSoup(html, 'html5lib')
         village_map = soup.find('map', {'name': 'rx'})

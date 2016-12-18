@@ -11,6 +11,7 @@ BUILDINGS_REPR = {
     (15, "mainbuilding"),
     (16, "rallypoint"),
     (17, "marketplace"),
+    (23, 'cranny'),
     (24, "townhall"),
     (25, "residence"),
     (26, "palace"),

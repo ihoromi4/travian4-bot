@@ -61,6 +61,6 @@ def outside_build():
                 building = get_low_level_cropland()
                 building.build()
         print('sleep')
-        time.sleep(10 + 10 * random.random())
+        time.sleep(60 + 240 * random.random())
 
 outside_build()

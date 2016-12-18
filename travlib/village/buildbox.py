@@ -34,7 +34,7 @@ class BuildBox:
         outer = self.__village.outer
         inner = self.__village.inner
         builds = []
-        resource_fields_list = outer.read_resource_fields()
+        resource_fields_list = outer._parse_dorf1()
         for rf in resource_fields_list:
             if rf['is_build']:
                 building = outer.get_building_by_id(rf['id'])
