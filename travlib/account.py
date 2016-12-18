@@ -22,6 +22,56 @@ class Account(eventmachine.EventMachine):
         self.__villages = {}  # id: village
         self.nation = NATIONS[self.nation_id-1]
 
+    def get_server_time(self):
+        html = self.login.get_html("dorf1.php")
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        div_servertime = soup.find('div', {'id': 'servertime'})
+        span_timer = div_servertime.find('span', {'class': 'timer'})
+        server_time = span_timer.text
+        return server_time
+    server_time = property(get_server_time)
+
+    def get_rank(self) -> int:
+        html = self.login.get_html("spieler.php")
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        table_details = soup.find('table', {'id': 'details'})
+        tr_rank = table_details.find_all('tr')[0]
+        rank = int(tr_rank.find('td').text)
+        return rank
+    rank = property(get_rank)
+
+    def get_alliance(self) -> int:
+        html = self.login.get_html("spieler.php")
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        table_details = soup.find('table', {'id': 'details'})
+        tr_alliance = table_details.find_all('tr')[2]
+        td_alliance = tr_alliance.find('td')
+        name = td_alliance.text
+        if name == '-':
+            return None
+        id_url = td_alliance.find('a')['href']
+        id = int(re.findall(r'aid=(\d+)', id_url)[0])
+        return name, id
+    alliance = property(get_alliance)
+
+    def get_villages_amount(self) -> int:
+        html = self.login.get_html("spieler.php")
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        table_details = soup.find('table', {'id': 'details'})
+        tr_villages_amount = table_details.find_all('tr')[3]
+        villages_amount = int(tr_villages_amount.find('td').text)
+        return villages_amount
+    villages_amount = property(get_villages_amount)
+
+    def get_population(self):
+        html = self.login.get_html("spieler.php")
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        table_details = soup.find('table', {'id': 'details'})
+        tr_population = table_details.find_all('tr')[4]
+        population = int(tr_population.find('td').text)
+        return population
+    population = property(get_population)
+
     def get_nation_id(self):
         html = self.login.get_html("dorf1.php")
         nation_compile = re.compile('nation(\d)')
@@ -42,11 +92,6 @@ class Account(eventmachine.EventMachine):
         self.update_villages()
         return list(self.__villages.values())
     villages = property(get_villages)
-
-    def get_villages_amount(self) -> int:
-        self.update_villages()
-        return len(self.__villages)
-    villages_amount = property(get_villages_amount)
 
     def get_villages_names(self) -> list:
         names = [self.__villages[id].name for id in self.__villages]

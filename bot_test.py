@@ -10,6 +10,10 @@ url = 'http://ts70.travian.com/'
 name = 'bro'
 password = '2bd384f'
 
+url = 'http://ts2.travian.com/'
+name = 'bro'
+password = '1994igor'
+
 # ru
 # url = 'http://ts5.travian.ru/'
 # name = 'broo'
@@ -22,6 +26,12 @@ acc = account.Account(url, name, password, headers)
 
 print('Travian version:', acc.login.game_version)
 print('Server language:', acc.login.server_language)
+print('Server time:', acc.server_time)
+
+print('Rank:', acc.rank)
+print('Alliance:', acc.alliance)
+print('Villages amount:', acc.villages_amount)
+print('Population:', acc.population)
 
 print(acc.villages)
 

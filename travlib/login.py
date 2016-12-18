@@ -149,7 +149,7 @@ class Login:
         if key in self.html_sources:
             html, load_time = self.html_sources[key]
             if time.time() - load_time < self.html_obsolescence_time:
-                print("no obsolescence html")
+                print("{} : no obsolescence html".format(url))
                 return html
         load_time = time.time()
         html = self.load_html(url, params=params, data=data)
