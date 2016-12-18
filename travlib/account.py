@@ -165,6 +165,10 @@ class Account(eventmachine.EventMachine):
             villages_data.append(village)
         return villages_data
 
+    def get_village_by_id(self, id: int):
+        self.update_villages()
+        return self.__villages[id]
+
     def get_village_by_name(self, name: str):
         for village in self.villages:
             if village.name == name:

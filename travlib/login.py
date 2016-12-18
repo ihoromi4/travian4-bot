@@ -90,6 +90,12 @@ class Login:
             response = self.post(url, data=data, params=params)
         return response
 
+    def server_get(self, url, data={}, params={}):
+        return self.get(self.url + url, data, params).text
+
+    def server_post(self, url, data={}, params={}):
+        return self.post(self.url + url, data, params).text
+
     def login(self):
         logging.debug('Start Login')
         response = self.get(self.url)

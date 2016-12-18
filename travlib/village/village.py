@@ -5,6 +5,7 @@ import bs4
 from . import outervillage
 from . import innervillage
 from . import buildbox
+from . import troopsbox
 
 
 class Village:
@@ -17,6 +18,7 @@ class Village:
         self.outer = outervillage.OuterVillage(self)
         self.inner = innervillage.InnerVillage(self)
         self.builds = buildbox.BuildBox(self)
+        self.troops = troopsbox.TroopsBox(self)
 
     def get_html(self, last_url='', params={}) -> str:
         params['newdid'] = self.id

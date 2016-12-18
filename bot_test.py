@@ -15,34 +15,37 @@ name = 'bro'
 password = '1994igor'
 
 # ru
-# url = 'http://ts5.travian.ru/'
-# name = 'broo'
-# password = '1994igor'
+url = 'http://ts5.travian.ru/'
+name = 'broo'
+password = '1994igor'
 
 user_agent = config['HEADERS']['user_agent']
 headers = {'User-Agent': user_agent}
 
 acc = account.Account(url, name, password, headers)
 
-print('Travian version:', acc.login.game_version)
-print('Server language:', acc.login.server_language)
-print('Server time:', acc.server_time)
 
-print('Rank:', acc.rank)
-print('Alliance:', acc.alliance)
-print('Villages amount:', acc.villages_amount)
-print('Population:', acc.population)
+def print_info():
+    print('Travian version:', acc.login.game_version)
+    print('Server language:', acc.login.server_language)
+    print('Server time:', acc.server_time)
 
-print(acc.villages)
+    print('Rank:', acc.rank)
+    print('Alliance:', acc.alliance)
+    print('Villages amount:', acc.villages_amount)
+    print('Population:', acc.population)
+    print(acc.villages)
 
-village = acc.villages[0]
-print(village.name)
-print(village.builds)
+# print_info()
 
 
 def outside_build():
     import time
     import random
+
+    village = acc.villages[0]
+    print(village.name)
+    print(village.builds)
 
     def get_low_level_build():
         buildings = village.outer.buildings
@@ -73,4 +76,20 @@ def outside_build():
         print('sleep')
         time.sleep(60 + 240 * random.random())
 
-outside_build()
+
+def bot_attack_raid():
+    import time
+    import random
+
+    village = acc.get_village_by_id(79385)
+    print('Village:', village.name)
+
+    troops = village.troops
+
+    while True:
+        troops.attack_raid((-83, 89))
+        print('sleep')
+        time.sleep(240 + 60 * random.random())
+
+# outside_build()
+bot_attack_raid()
