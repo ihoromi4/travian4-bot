@@ -39,44 +39,6 @@ def print_info():
 # print_info()
 
 
-def outside_build():
-    import time
-    import random
-
-    village = acc.villages[0]
-    print(village.name)
-    print(village.builds)
-
-    def get_low_level_build():
-        buildings = village.outer.buildings
-        building = buildings[0]
-        for b in buildings:
-            if not type(b) is resourcefield.Cropland:
-                if b.level < building.level:
-                    building = b
-        return building
-
-    def get_low_level_cropland():
-        buildings = village.outer.buildings
-        building = buildings[0]
-        for b in buildings:
-            if type(b) is resourcefield.Cropland:
-                if b.level < building.level:
-                    building = b
-        return building
-
-    while True:
-        if not village.builds:
-            if village.free_crop >= 5:
-                building = get_low_level_build()
-                building.build()
-            else:
-                building = get_low_level_cropland()
-                building.build()
-        print('sleep')
-        time.sleep(60 + 240 * random.random())
-
-
 def bot_attack_raid():
     import time
     import random
@@ -86,10 +48,31 @@ def bot_attack_raid():
 
     troops = village.troops
 
-    while True:
-        troops.attack_raid((-83, 89))
-        print('sleep')
-        time.sleep(240 + 60 * random.random())
+    period = 7 * 60
+    delta = 10
 
-# outside_build()
+    farms = {
+        (-83, 89),
+        (-79, 93),
+        (-70, 89),
+        (-87, 89),
+        (-72, 93),
+        (-76, 86),
+        (-77, 99),
+        (-81, 89)
+    }
+    print(farms)
+
+    while True:
+        for pos in farms:
+            troops.attack_raid(pos)
+            time.sleep(delta * random.random())
+        print('Wait for next attack...')
+        time.sleep(period * (1 + random.random()))
+
 bot_attack_raid()
+'''
+Фарм - обнаружена проблемма!
+Если войск меньше, чем указано, то отправляется доступное количество.
+Должно быть: отправляется указанное количество, или ничего.
+'''

@@ -51,13 +51,22 @@ class Login:
     headers = property(get_headers, set_headers)
 
     def get(self, url, data={}, params={}):
-        try:
-            logging.debug('Send get request to url: {}'.format(url))
-            response = self.session.get(url, params=params, timeout=self.timeout)
-        except requests.exceptions.ConnectionError:
-            raise
-        except:
-            raise
+        MAXTRIES = 2
+        for attempt in range(1, MAXTRIES + 1):
+            try:
+                logging.debug('Send get request to url: {}'.format(url))
+                response = self.session.get(url, params=params, timeout=self.timeout)
+                break
+            except requests.exceptions.ConnectionError:
+                print('Attempt %s of %s' % (attempt, MAXTRIES))
+                self.new_session()
+                self.login()
+            except requests.exceptions.ReadTimeout:
+                print('Attempt %s of %s' % (attempt, MAXTRIES))
+                self.new_session()
+                self.login()
+            except:
+                raise
         if response:
             status_code = response.status_code
             is_redirect = response.is_redirect
@@ -67,14 +76,23 @@ class Login:
         return response
 
     def post(self, url, data={}, params={}):
-        try:
-            logging.debug('Send post request to url: {}'.format(url))
-            response = self.session.post(url, params=params, data=data, timeout=self.timeout)
-        except requests.exceptions.ConnectionError:
-            raise
-        except:
-            logging.error('Net problem, cant fetch the URL {}'.format(url))
-            raise
+        MAXTRIES = 2
+        for attempt in range(1, MAXTRIES + 1):
+            try:
+                logging.debug('Send post request to url: {}'.format(url))
+                response = self.session.post(url, params=params, data=data, timeout=self.timeout)
+                break
+            except requests.exceptions.ConnectionError:
+                print('Attempt %s of %s' % (attempt, MAXTRIES))
+                self.new_session()
+                self.login()
+            except requests.exceptions.ReadTimeout:
+                print('Attempt %s of %s' % (attempt, MAXTRIES))
+                self.new_session()
+                self.login()
+            except:
+                logging.error('Net problem, cant fetch the URL {}'.format(url))
+                raise
         if response:
             status_code = response.status_code
             is_redirect = response.is_redirect

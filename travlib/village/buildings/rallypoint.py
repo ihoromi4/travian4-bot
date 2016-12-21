@@ -34,34 +34,8 @@ class RallyPoint(building.Building):
         data['timestamp_checksum'] = div_build.find('input', {'name': 'timestamp_checksum'})['value']
         data['b'] = div_build.find('input', {'name': 'b'})['value']
         data['currentDid'] = div_build.find('input', {'name': 'currentDid'})['value']
-        self.step_2(data)
-
-    def step_2(self, data):
-        send_troops_page = 2
-        params = {'id': self.id, 'tt': send_troops_page}
-        data_ = {
-            'redeployHero': '',
-            'timestamp': 0,
-            'timestamp_checksum': 0,
-            'id': '1',
-            'a': 'aaa',
-            'c': 0,
-            'kid': '343',
-            't1': '0',
-            't5': 5,
-            't11': '0',
-            'sendReally': '0',
-            'troopsSent': '1',
-            'currentDid': 0,
-            'b': 0,
-            'dname': '',
-            'x': 0,
-            'y': 0,
-            's1': 'ok'
-        }
         data['t5'] = 5
         data['s1'] = 'ok'
-
         self.step_3(data)
 
     def step_3(self, data):
@@ -73,12 +47,18 @@ class RallyPoint(building.Building):
         # data = {}
         data['timestamp'] = div_build.find('input', {'name': 'timestamp'})['value']
         data['timestamp_checksum'] = div_build.find('input', {'name': 'timestamp_checksum'})['value']
-        data['id'] = div_build.find('input', {'name': 'id'})['value']
+        input_id = div_build.find('input', {'name': 'id'})
+        if not input_id:
+            return      # some problem
+        data['id'] = input_id['value']
         data['a'] = div_build.find('input', {'name': 'a'})['value']
         data['c'] = div_build.find('input', {'name': 'c'})['value']
         data['kid'] = div_build.find('input', {'name': 'kid'})['value']
         for i in range(1, 12):
-            data['t%s' % (i,)] = div_build.find('input', {'name': 't%s' % (i,)})['value']
+            data['t%s' % (i,)] = int(div_build.find('input', {'name': 't%s' % (i,)})['value'])
+        # костыль:
+        if data['t5'] < 5:
+            return
         data['sendReally'] = div_build.find('input', {'name': 'sendReally'})['value']
         data['troopsSent'] = div_build.find('input', {'name': 'troopsSent'})['value']
         data['currentDid'] = div_build.find('input', {'name': 'currentDid'})['value']
