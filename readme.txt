@@ -4,7 +4,8 @@ travianbot -- the bot for Travian Legends browser game
 DEPENDINGS
 ----------
 requests
-bs5
+bs4
+html5lib
 pyqt5
 
 RUNNING

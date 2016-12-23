@@ -41,15 +41,11 @@ def print_info():
 
 def bot_attack_raid():
     import time
-    import random
+
+    from botlib import farmservice
 
     village = acc.get_village_by_id(79385)
     print('Village:', village.name)
-
-    troops = village.troops
-
-    period = 7 * 60
-    delta = 10
 
     farms = {
         (-83, 89),
@@ -59,16 +55,17 @@ def bot_attack_raid():
         (-72, 93),
         (-76, 86),
         (-77, 99),
-        (-81, 89)
+        (-79, 99),
+        (-81, 89),
+        (-86, 82),
+        (-74, 86)
     }
-    print(farms)
+
+    farming = farmservice.FarmService(village, farms)
 
     while True:
-        for pos in farms:
-            troops.attack_raid(pos)
-            time.sleep(delta * random.random())
-        print('Wait for next attack...')
-        time.sleep(period * (1 + random.random()))
+        farming.update()
+        time.sleep(1)
 
 bot_attack_raid()
 '''

@@ -114,6 +114,12 @@ class Login:
     def server_post(self, url, data={}, params={}):
         return self.post(self.url + url, data, params).text
 
+    def server_get_request(self, url, data={}, params={}, *args, **kwargs):
+        return self.get(self.url + url, data, params, *args, **kwargs)
+
+    def server_post_request(self, url, data={}, params={}, *args, **kwargs):
+        return self.post(self.url + url, data, params, *args, **kwargs)
+
     def login(self):
         logging.debug('Start Login')
         response = self.get(self.url)

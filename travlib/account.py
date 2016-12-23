@@ -5,6 +5,8 @@ import bs4
 from . import login
 from .event import eventmachine
 from .village import village
+from . import reports
+from . import map
 
 NATIONS = ['romans', 'teutons', 'gauls']
 
@@ -21,6 +23,8 @@ class Account(eventmachine.EventMachine):
         self.language = self.login.language
         self.__villages = {}  # id: village
         self.nation = NATIONS[self.nation_id-1]
+        self.map = map.Map(self)
+        self.reports = reports.Reports(self)
 
     def get_server_time(self):
         html = self.login.get_html("dorf1.php")
