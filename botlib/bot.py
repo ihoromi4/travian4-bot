@@ -1,5 +1,15 @@
+import time
+import random
+
 from travlib import account
 from travlib.village.buildings import resourcefield
+
+BUILDINGS_TYPES = [
+    resourcefield.Woodcutter,
+    resourcefield.Claypit,
+    resourcefield.Ironmine,
+    resourcefield.Cropland
+]
 
 
 class ResourceBuilder:
@@ -7,7 +17,6 @@ class ResourceBuilder:
         self.account = account
 
     def error_test(self):
-        import time
         village = self.account.villages[0]
         print(village.name)
         print(village.builds)
@@ -15,10 +24,40 @@ class ResourceBuilder:
         time.sleep(600)
         print(village.builds)
 
-    def outside_build(self):
-        import time
-        import random
+    @staticmethod
+    def get_low_level_build(village, building_type=None):
+        buildings = village.outer.buildings
+        building = None
+        for b in buildings:
+            if not building:
+                if not building_type:
+                    building = b
+                elif type(b) is building_type:
+                    building = b
+            else:
+                if type(b) is building_type:
+                    if b.level < building.level:
+                        building = b
+        return building
 
+    def resource_balance_builder(self):
+        village = self.account.villages[0]
+        while True:
+            if not village.builds:
+                resources = village.resources
+                min_res = min(resources[:3])
+                min_res_index = resources.index(min_res)
+                building_type = BUILDINGS_TYPES[min_res_index]
+                if village.free_crop >= 5:
+                    building = self.get_low_level_build(village, building_type)
+                    building.build()
+                else:
+                    building = self.get_low_level_build(village, resourcefield.Cropland)
+                    building.build()
+            print('sleep')
+            time.sleep(300 + 300 * random.random())
+
+    def outside_build(self):
         village = self.account.villages[0]
         print(village.name)
         print(village.builds)

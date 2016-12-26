@@ -35,8 +35,10 @@ class OuterVillage:
         for field_info in resource_fields:
             name = field_info['name']
             id = field_info['id']
+            type_index = field_info['type']
             level = field_info['level']
-            repr = self.village.account.language.data["buildings"].get(name, "")
+            repr = self.village.account.language.index_to_building_repr(type_index)
+            # self.village.account.language.data["buildings"].get(name, "")
             building_type = buildings.get_building_type(repr)
             field = building_type(self, name, id, level)
             self._buildings[id] = field
@@ -65,9 +67,25 @@ class OuterVillage:
             resource_fields.append(field_dict)
         return resource_fields
 
+    @staticmethod
+    def _parse_buildings_types(soup):
+        village_map = soup.find('div', {'id': 'village_map'})
+        div_all = village_map.find_all('div', recursive=False)
+        types = {}
+        for i in range(len(div_all)):
+            div = div_all[i]
+            id = i + 1
+            class_gid = div['class'][3]
+            if class_gid == 'underConstruction':
+                class_gid = div['class'][4]
+            build_type = int(class_gid[3:])
+            types[id] = build_type
+        return types
+
     def _parse_dorf1(self):
         html = self.login.load_dorf1(self.id)
         soup = bs4.BeautifulSoup(html, 'html5lib')
+        types = self._parse_buildings_types(soup)
         village_map = soup.find('map', {'name': 'rx'})
         areas = village_map.find_all('area')
         resource_fields = []
@@ -100,6 +118,7 @@ class OuterVillage:
             resource_field['name'] = name
             resource_field['level'] = level
             resource_field['id'] = id
+            resource_field['type'] = types[id]
             resource_field['is_build'] = is_build
             resource_field['is_top_level'] = is_top_level
             resource_field['resources_to_build'] = resources_to_build

@@ -122,7 +122,7 @@ class Login:
 
     def login(self):
         logging.debug('Start Login')
-        response = self.get(self.url)
+        response = self.session.get(self.url)
         if response.status_code != 200:
             return False
         html = response.text
@@ -138,7 +138,7 @@ class Login:
             'w': '1366:768',
             'login': login
             }
-        response = self.send_request(self.url + 'dorf1.php', data=data)
+        response = self.session.post(self.url + 'dorf1.php', data=data)
         if response.status_code != 200:
             return False
         html = response.text
