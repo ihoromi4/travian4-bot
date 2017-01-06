@@ -1,22 +1,20 @@
 import sys
 import configparser
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QAction, qApp
+import PyQt5.QtWidgets as qtwidgets
+from PyQt5.QtWidgets import QApplication, qApp
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QAction, QPushButton
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QIcon
 
 from travlib import login
 from travlib import account
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-lang_dir = 'data/language/'
 url = 'http://ts5.travian.ru/'
 name = 'broo'
-password = '1994igor'
+password = 'wA4iN_tYR'
 
-user_agent = config['HEADERS']['user_agent']
+user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0'
 headers = {'User-Agent': user_agent}
 
 app = QApplication(sys.argv)
@@ -32,13 +30,13 @@ class MainWindow(QMainWindow):
         # self.init()
         self.statusbar = self.statusBar()
         self.statusbar.showMessage("Ready to work!")
+        # ---
         self.init_menubar()
         self.init_gui()
         self.show()
 
     def init_travian(self):
-        self.login = login.Login(lang_dir, url, name, password, headers)
-        self.account = account.Account(self.login)
+        self.account = account.Account(url, name, password, headers)
 
     def init(self):
         for village in self.account.villages:
@@ -55,14 +53,24 @@ class MainWindow(QMainWindow):
         file_menu.addAction(exit_action)
 
     def init_gui(self):
-        label1 = QLabel('fgr', self)
-        label2 = QLabel('hjr', self)
-        hbox = QHBoxLayout()
-        hbox.addStretch(1)
-        hbox.addWidget(label1)
-        hbox.addWidget(label2)
+        widget = QWidget(self)
+        policy = qtwidgets.QSizePolicy(
+            qtwidgets.QSizePolicy.Preferred,
+            qtwidgets.QSizePolicy.Preferred)
+        widget.setSizePolicy(policy)
+        #widget.setFixedSize(300, 300)
 
-        self.setLayout(hbox)
+        label1 = QLabel('fgr')
+        label2 = QLabel('hjr')
+        btn = QPushButton('Button')
+        btn.move(50, 50)
+        box = QVBoxLayout()
+        box.addStretch(1)
+        box.addWidget(label1)
+        box.addWidget(label2)
+        box.addWidget(btn)
+
+        widget.setLayout(box)
 
 win = MainWindow()
 

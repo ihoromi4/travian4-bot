@@ -75,10 +75,12 @@ class OuterVillage:
         for i in range(len(div_all)):
             div = div_all[i]
             id = i + 1
-            class_gid = div['class'][3]
-            if class_gid == 'underConstruction':
-                class_gid = div['class'][4]
-            build_type = int(class_gid[3:])
+            build_type = -1
+            for element in div['class']:
+                if 'gid' in element:
+                    build_type = int(element[3:])
+            if build_type == -1:
+                raise TypeError("build_type == -1")
             types[id] = build_type
         return types
 

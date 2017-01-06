@@ -21,7 +21,7 @@ class RallyPoint(building.Building):
     def attack_raid(self, pos):
         pass
 
-    def step_1(self, pos, c=4):
+    def step_1(self, pos, troops, c=4):
         send_troops_page = 2
         html = self.village_part.village.login.get_html('build.php', {'id': self.id, 'tt': send_troops_page})
         soup = bs4.BeautifulSoup(html, 'html5lib')
@@ -34,11 +34,12 @@ class RallyPoint(building.Building):
         data['timestamp_checksum'] = div_build.find('input', {'name': 'timestamp_checksum'})['value']
         data['b'] = div_build.find('input', {'name': 'b'})['value']
         data['currentDid'] = div_build.find('input', {'name': 'currentDid'})['value']
-        data['t5'] = 5
+        data.update(troops)
+        # data['t5'] = 5
         data['s1'] = 'ok'
-        self.step_3(data)
+        self.step_2(data, troops)
 
-    def step_3(self, data):
+    def step_2(self, data, troops):
         send_troops_page = 2
         params = {'id': self.id, 'tt': send_troops_page}
         html = self.village_part.village.login.server_post('build.php', data=data, params=params)
@@ -57,8 +58,9 @@ class RallyPoint(building.Building):
         for i in range(1, 12):
             data['t%s' % (i,)] = int(div_build.find('input', {'name': 't%s' % (i,)})['value'])
         # костыль:
-        if data['t5'] < 5:
-            return
+        for key in troops:
+            if data[key] < troops[key]:
+                return
         data['sendReally'] = div_build.find('input', {'name': 'sendReally'})['value']
         data['troopsSent'] = div_build.find('input', {'name': 'troopsSent'})['value']
         data['currentDid'] = div_build.find('input', {'name': 'currentDid'})['value']
@@ -68,10 +70,9 @@ class RallyPoint(building.Building):
         data['y'] = div_build.find('input', {'name': 'y'})['value']
         html = self.village_part.village.login.server_post('build.php', data=data, params=params)
 
-    def send_troops(self, pos, c=4):
+    def send_troops(self, pos, troops={'t5': 5}, c=4):
         # c = 2       # Reinforcement
         # c = 3       # Attack: Normal
         # c = 4       # Attack: Raid
         print(self.village_part.village.name, 'raid to', pos)
-        troops_type = 't5'
-        self.step_1(pos, c)
+        self.step_1(pos, troops, c)

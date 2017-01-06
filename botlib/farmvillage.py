@@ -5,11 +5,12 @@ from . import statemachine
 
 
 class FarmVillage(statemachine.StateMachine):
-    def __init__(self, village, pos):
+    def __init__(self, village, pos, troops_number=5):
         statemachine.StateMachine.__init__(self)
         self.village = village
         self.pos = pos
-        self.attack_period = 7 * 60 + 180 * random.random()
+        self.troops_number = troops_number
+        self.attack_period = 8 * 60 + 180 * random.random()
         self.last_attack_time = 0
         self.set_state(self.state_wait)
 
@@ -19,5 +20,5 @@ class FarmVillage(statemachine.StateMachine):
 
     def state_raid(self):
         self.last_attack_time = time.time()
-        self.village.troops.attack_raid(self.pos)
+        self.village.troops.attack_raid(self.pos, {'t5': self.troops_number})
         self.set_state(self.state_wait)

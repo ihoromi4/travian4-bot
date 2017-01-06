@@ -52,6 +52,7 @@ class Login:
 
     def get(self, url, data={}, params={}):
         MAXTRIES = 2
+        response = None
         for attempt in range(1, MAXTRIES + 1):
             try:
                 logging.debug('Send get request to url: {}'.format(url))
@@ -77,6 +78,7 @@ class Login:
 
     def post(self, url, data={}, params={}):
         MAXTRIES = 2
+        response = None
         for attempt in range(1, MAXTRIES + 1):
             try:
                 logging.debug('Send post request to url: {}'.format(url))

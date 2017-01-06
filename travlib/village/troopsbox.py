@@ -13,5 +13,5 @@ class TroopsBox:
     def attack_normal(self):
         pass
 
-    def attack_raid(self, pos):
-        self.rallypoint.send_troops(pos)
+    def attack_raid(self, pos, troops):
+        self.rallypoint.send_troops(pos, troops)
