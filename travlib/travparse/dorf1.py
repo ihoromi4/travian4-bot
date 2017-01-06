@@ -3,6 +3,25 @@ import bs4
 import re
 
 
+def parse_game_version(html: str) -> float:
+    pattern = r"Travian.Game.version = '([.\d]*)';"
+    regex = re.compile(pattern)
+    results = regex.findall(html)
+    if len(results):
+        game_version = float(results[0])
+        return game_version
+    raise TypeError("It is not valid page!")
+
+
+def parse_server_language(html: str) -> str:
+    pattern = r"Travian.Game.worldId = '(\D+)\d+';"
+    regex = re.compile(pattern)
+    results = regex.findall(html)
+    if results:
+        return results[0]
+    raise TypeError("It is not valid page!")
+
+
 def parse_ajax_token(html: str) -> str:
     pattern = r'ajaxToken\s*=\s*\'(\w+)\''
     ajax_token_compile = re.compile(pattern)
@@ -27,18 +46,13 @@ def parse_nation_id(soup: bs4.BeautifulSoup) -> int:
     return nation_id
 
 
-def parse_gold(soup: bs4.BeautifulSoup) -> int:
+def parse_gold_silver(soup: bs4.BeautifulSoup) -> dict:
     gold_silver_container = soup.find('div', {'id': 'goldSilverContainer'})
     gold_container = gold_silver_container.find('div', {'class': 'gold'})
     gold_span = gold_container.find('span', {'class': 'ajaxReplaceableGoldAmount'})
-    return int(gold_span.text)
-
-
-def parse_silver(soup: bs4.BeautifulSoup) -> int:
-    gold_silver_container = soup.find('div', {'id': 'goldSilverContainer'})
     silver_container = gold_silver_container.find('div', {'class': 'silver'})
     silver_span = silver_container.find('span', {'class': 'ajaxReplaceableSilverAmount'})
-    return int(silver_span.text)
+    return {'gold': int(gold_span.text), 'silver': int(silver_span.text)}
 
 
 def parse_villages_data(soup: bs4.BeautifulSoup) -> list:

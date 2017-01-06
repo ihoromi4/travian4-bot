@@ -110,11 +110,11 @@ class Account(eventmachine.EventMachine):
     def get_gold(self):
         html = self.login.get_html("dorf1.php")
         soup = bs4.BeautifulSoup(html, 'html5lib')
-        return dorf1.parse_gold(soup)
+        return dorf1.parse_gold_silver(soup)['gold']
     gold = property(get_gold)
 
     def get_silver(self):
         html = self.login.get_html("dorf1.php")
         soup = bs4.BeautifulSoup(html, 'html5lib')
-        return dorf1.parse_silver(soup)
+        return dorf1.parse_gold_silver(soup)['silver']
     silver = property(get_silver)

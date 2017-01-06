@@ -7,6 +7,8 @@ import bs4
 
 from . import language
 
+from .travparse import dorf1
+
 
 logging.debug('Start loading travlib/loging.py')
 
@@ -197,15 +199,7 @@ class Login:
     def get_game_version(self):
         if not self.__game_version:
             html = self.get_html('dorf1.php')
-            pattern = r"Travian.Game.version = '([.\d]*)';"
-            regex = re.compile(pattern)
-            results = regex.findall(html)
-            if not len(results):
-                raise TypeError("It is not travian page!")
-            try:
-                game_version = float(results[0])
-            except ValueError:
-                raise ValueError("Bad parsing pattern!")
+            game_version = dorf1.parse_game_version(html)
             self.__game_version = game_version
         return self.__game_version
     game_version = property(get_game_version)
@@ -213,12 +207,7 @@ class Login:
     def get_server_language(self):
         if not self.__server_language:
             html = self.get_html('dorf1.php')
-            pattern = r"Travian.Game.worldId = '(\D+)\d+';"
-            regex = re.compile(pattern)
-            results = regex.findall(html)
-            if not results:
-                raise TypeError("It is not travian page!")
-            self.__server_language = results[0]
+            self.__server_language = dorf1.parse_server_language(html)
         return self.__server_language
     server_language = property(get_server_language)
 
