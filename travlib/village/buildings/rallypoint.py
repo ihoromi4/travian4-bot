@@ -1,5 +1,6 @@
 import bs4
 
+from ...travparse import build
 from . import building
 
 
@@ -11,6 +12,24 @@ class RallyPoint(building.Building):
 
     def post(self, url, params, data):
         pass
+
+    def get_incoming(self):
+        html = self.village_part.get_html({'id': self.id, 'tt': 1})
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        return build.rallypoint.parse_troops(soup)['incoming']
+    incoming = property(get_incoming)
+
+    def get_outgoing(self):
+        html = self.village_part.get_html({'id': self.id, 'tt': 1})
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        return build.rallypoint.parse_troops(soup)['outgoing']
+    outgoing = property(get_outgoing)
+
+    def get_in_village(self):
+        html = self.village_part.get_html({'id': self.id, 'tt': 1})
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        return build.rallypoint.parse_troops(soup)['in_village']
+    in_village = property(get_in_village)
 
     def reinforcement(self):
         pass

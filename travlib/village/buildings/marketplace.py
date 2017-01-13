@@ -3,6 +3,7 @@ import re
 
 import bs4
 
+from ...travparse import build
 from . import building
 
 
@@ -15,34 +16,32 @@ class Marketplace(building.Building):
         self._busy_on_marketplace_merchants = 0
         self._merchants_in_travel = 0
 
-    def get_data(self):
+    def _update_merchants_data(self):
         html = self.village_part.get_html({'id': self.id, 't': 0})
         soup = bs4.BeautifulSoup(html, 'html5lib')
-        merchants = soup.find_all('div', {'class': 'whereAreMyMerchants'})[0]
-        text = merchants.text
-        merchants_data = re.findall(r'(\d+)', text)
-        self._free_merchants = int(merchants_data[0])
-        self._max_merchants = int(merchants_data[1])
-        self._busy_on_marketplace_merchants = int(merchants_data[3])
-        self._merchants_in_travel = int(merchants_data[4])
+        data = build.marketplace.parse_t0(soup)
+        self._free_merchants = data['free_merchants']
+        self._max_merchants = data['max_merchants']
+        self._busy_on_marketplace_merchants = data['busy_on_marketplace_merchants']
+        self._merchants_in_travel = data['merchants_in_travel']
 
     def get_max_merchants(self) -> int:
-        self.get_data()
+        self._update_merchants_data()
         return self._max_merchants
     max_merchants = property(get_max_merchants)
 
     def get_free_merchants(self) -> int:
-        self.get_data()
+        self._update_merchants_data()
         return self._free_merchants
     free_merchants = property(get_free_merchants)
 
     def get_busy_on_marketplace_merchants(self) -> int:
-        self.get_data()
+        self._update_merchants_data()
         return self._busy_on_marketplace_merchants
     busy_on_marketplace_merchants = property(get_busy_on_marketplace_merchants)
 
     def get_merchants_in_travel(self) -> int:
-        self.get_data()
+        self._update_merchants_data()
         return self._merchants_in_travel
     merchants_in_travel = property(get_merchants_in_travel)
 
@@ -97,7 +96,6 @@ class Marketplace(building.Building):
 
     def send_resources(self, name_or_pos, res=[0, 0, 0, 0]) -> bool:
         login = self.village_part.village.login
-        ajax_token = self.village_part.village.account.ajax_token
         html = self.village_part.get_html({'id': self.id, 't': '5'})
         data = dict()
         for i in range(0, 4):
@@ -116,9 +114,8 @@ class Marketplace(building.Building):
         data['id'] = str(self.id)
         data['t'] = '5'
         data['x2'] = '1'
-        data['ajaxToken'] = ajax_token
         data['cmd'] = 'prepareMarketplace'
-        html = login.get_ajax('ajax.php', data=data)
+        html = login.get_ajax(data=data)
         response = json.loads(html)['response']
         if response['error']:
             print('send resource: error true')

@@ -29,14 +29,14 @@ def parse_villages_amount(soup: bs4.BeautifulSoup) -> int:
     return villages_amount
 
 
-def parse_population(soup: bs4.BeautifulSoup):
+def parse_population(soup: bs4.BeautifulSoup) -> int:
     table_details = soup.find('table', {'id': 'details'})
     tr_population = table_details.find_all('tr')[4]
     population = int(tr_population.find('td').text)
     return population
 
 
-def parse_spieler(soup: bs4.BeautifulSoup):
+def parse_spieler(soup: bs4.BeautifulSoup) -> list:
     table = soup.find('table', {'id': 'villages'})
     table_body = table.find('tbody')
     all_tr = table_body.find_all('tr')

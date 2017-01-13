@@ -1,7 +1,8 @@
+import time
 import configparser
+import json
 
 from travlib import account
-from travlib.village.buildings import resourcefield
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -10,33 +11,10 @@ url = 'http://ts70.travian.com/'
 name = 'bro'
 password = '2bd384f'
 
-url = 'http://ts2.travian.com/'
-name = 'bro'
-password = '1994igor'
-
-# ru
-url = 'http://ts5.travian.ru/'
-name = 'broo'
-password = 'wA4iN_tYR'
-
 user_agent = config['HEADERS']['user_agent']
 headers = {'User-Agent': user_agent}
 
 acc = account.Account(url, name, password, headers)
-
-
-def print_info():
-    print('Travian version:', acc.login.game_version)
-    print('Server language:', acc.login.server_language)
-    print('Server time:', acc.server_time)
-
-    print('Rank:', acc.rank)
-    print('Alliance:', acc.alliance)
-    print('Villages amount:', acc.villages_amount)
-    print('Population:', acc.population)
-    print(acc.villages)
-
-# print_info()
 
 
 def bot_attack_raid():
@@ -44,23 +22,13 @@ def bot_attack_raid():
 
     from botlib import farmservice
 
-    village = acc.get_village_by_id(79385)
+    village = acc.get_village_by_id(69437)
     print('Village:', village.name)
 
-    farms = {
-        ((-83, 89), 10),
-        ((-79, 93), 5),
-        ((-70, 89), 5),
-        ((-87, 89), 5),
-        ((-72, 93), 5),
-        ((-76, 86), 5),
-        ((-77, 99), 5),
-        ((-79, 99), 5),
-        ((-81, 89), 5),
-        ((-86, 82), 5),
-        ((-79, 88), 20)
-        # (-74, 86)
-    }
+    with open('data/servers/ts70/farm.json') as file:
+        json_data = json.load(file)
+
+    farms = json_data['farms']
 
     farming = farmservice.FarmService(village, farms)
 
@@ -68,9 +36,9 @@ def bot_attack_raid():
         farming.update()
         time.sleep(1)
 
-bot_attack_raid()
-'''
-Фарм - обнаружена проблемма!
-Если войск меньше, чем указано, то отправляется доступное количество.
-Должно быть: отправляется указанное количество, или ничего.
-'''
+while True:
+    try:
+        bot_attack_raid()
+    except BaseException as e:
+        pass
+    time.sleep(20 * 60)

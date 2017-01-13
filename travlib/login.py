@@ -32,6 +32,7 @@ class Login:
         self.reconnections = 3
         self.html_obsolescence_time = 3.0
         self.loggedin = False
+        self.ajax_token = None
         self.html_sources = dict()
 
         self.__server_language = None
@@ -148,6 +149,7 @@ class Login:
         html = response.text
         if 'playerName' in html:
             self.loggedin = True
+            self.ajax_token = dorf1.parse_ajax_token(html)
             logging.debug('Login succeed')
             return True
         self.loggedin = False
@@ -172,9 +174,13 @@ class Login:
                     time.sleep(self.relogin_delay)
         return html
 
-    def get_ajax(self, last_url, params={}, data={}):
+    def get_ajax(self, params: dict={}, data: dict={}) -> str:
+        """ Выполняет ajax запрос и возвращает результат """
+        last_url = 'ajax.php'  # Адрес для ajax запросов постоянный
         url = self.url + last_url
-        html = self.send_request(url, data=data, params=params).text
+        data['ajaxToken'] = self.ajax_token  # В данных должен быть ajax_token, добавляем.
+        response = self.post(url, data=data, params=params)  # Нужен именно post запрос
+        html = response.text
         return html
 
     def get_html(self, last_url, params={}, data={}):

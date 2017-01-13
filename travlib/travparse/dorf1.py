@@ -78,3 +78,25 @@ def parse_villages_data(soup: bs4.BeautifulSoup) -> list:
         village['coords'] = (x, y)
         villages_data.append(village)
     return villages_data
+
+
+def parse_all_troops(soup: bs4.BeautifulSoup) -> dict:
+    div_units = soup.find('div', {'class': 'boxes villageList units'})
+    table_troops = div_units.find('table', {'id': 'troops'})
+    tbody = table_troops.find('tbody')
+    tr_all = tbody.find_all('tr')
+    units = {}
+    for tr in tr_all:
+        td_all = tr.find_all('td')
+        if len(td_all) < 3:
+            return dict()
+
+        img = td_all[0].find('img')
+        unit_type = int(img['class'][1][1:])
+
+        number = int(td_all[1].text)
+
+        name = td_all[2].text
+
+        units[unit_type] = [number, name]
+    return units
