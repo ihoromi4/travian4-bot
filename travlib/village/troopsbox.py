@@ -4,8 +4,17 @@ from ..travparse import dorf1
 
 
 class TroopsBox:
+    """ Агрегирует информацию о всех войсках в деревне """
+
     def __init__(self, village):
         self.village = village
+
+    def get_movements(self):
+        """ Возвращает информацию о передвижениях """
+        html = self.village.get_html('dorf1.php')
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        movements = dorf1.parse_movements(soup)
+        return movements
 
     def get_incoming(self):
         return self.rallypoint.incoming

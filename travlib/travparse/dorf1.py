@@ -100,3 +100,36 @@ def parse_all_troops(soup: bs4.BeautifulSoup) -> dict:
 
         units[unit_type] = [number, name]
     return units
+
+
+def parse_movements(soup: bs4.BeautifulSoup) -> dict:
+    replace_type = {
+        'def1': 'return',  # Воины возвращаются
+        'def2': 'reinforcement',  # Воины уходят в подкрепление
+        'att2': 'out-attack',  # Исходящая атака
+        'att1': 'in-attack',  # Деревню атакуют
+        'hero_on_adventure': 'adventure'  # Герой идет в приключение
+    }
+    table_movements = soup.find('table', {'id': 'movements'})
+    if not table_movements:
+        return dict()
+    tbody = table_movements.find('tbody')
+    trs = tbody.find_all('tr', recursive=False)
+    movements = {}
+    for tr in trs:
+        img = tr.find('img')
+        if not img:
+            continue
+        original_type = img['class'][0]
+        mov_type = replace_type.get(original_type, '')
+        div_mov = tr.find('div', {'class': 'mov'})
+        span = div_mov.find('span')
+        pattern = r'(\d+) '
+        number = int(re.findall(pattern, span.text)[0])
+        span_timer = tr.find('span', {'class': 'timer'})
+        time = span_timer.text
+        data = dict()
+        data['number'] = number
+        data['time'] = time
+        movements[mov_type] = data
+    return movements

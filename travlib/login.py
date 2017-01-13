@@ -73,7 +73,10 @@ class Login:
                 raise
         if response:
             status_code = response.status_code
-            is_redirect = response.is_redirect
+            if hasattr(response, 'is_redirect'):
+                is_redirect = response.is_redirect
+            else:
+                is_redirect = None
             logging.debug('Response: status_code: {}, is_redirect {}'.format(status_code, is_redirect))
         else:
             raise ValueError('response must be not None')
@@ -100,7 +103,10 @@ class Login:
                 raise
         if response:
             status_code = response.status_code
-            is_redirect = response.is_redirect
+            if hasattr(response, 'is_redirect'):
+                is_redirect = response.is_redirect
+            else:
+                is_redirect = None
             logging.debug('Response: status_code: {}, is_redirect {}'.format(status_code, is_redirect))
         else:
             raise ValueError('response must be not None')

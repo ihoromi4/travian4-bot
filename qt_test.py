@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-import qtlib
+import guilib
 
 app = QtWidgets.QApplication(sys.argv)
 
