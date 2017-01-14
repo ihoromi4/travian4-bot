@@ -41,5 +41,4 @@ while True:
         bot_attack_raid()
     except BaseException as e:
         print(e)
-        raise
     time.sleep(20 * 60)
