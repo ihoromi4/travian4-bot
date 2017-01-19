@@ -1,4 +1,5 @@
 from travlib import account
+from travlib import map
 
 url = 'http://ts70.travian.com/'
 name = 'bro'
@@ -10,4 +11,5 @@ password = '2bd384f'
 
 acc = account.Account(url, name, password)
 
-print(acc.map.get_area((-55, -20)))
+#area = acc.map.get_area((-55, -20), map.Zoom.MAX)
+print(acc.map.get_pos_info((-56, -18)))
