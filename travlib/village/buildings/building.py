@@ -42,6 +42,7 @@ class Building:
             return 0
 
     def build(self):
+        """ Начинает повышение уровня здания """
         html = self.village_part.get_html({'id': self.id})
         try:
             result = re.search(r'(?<=&amp;c=)(\w+)', html)
@@ -55,7 +56,9 @@ class Building:
         self.village_part.start_build(self.id, c)
 
     def upgrade(self):
+        """ Начинает постройку здания плюс один уровень """
         self.build()
 
     def downgrade(self):
+        """ При вызове метода начинается понижение уровня здания на один """
         self.village_part.downgrade(self)

@@ -42,6 +42,16 @@ BUILDINGS_REPR = {
     (39, 'greatgranary')
 }
 
+DICT_INDEX_TO_BUILDING = dict(BUILDINGS_REPR)
+
+
+def index_to_building_repr(index: int) -> str:
+    """ Принимает идентификатор ГРАФИКИ постройки. Возвращает внутреннее представление """
+    repr = DICT_INDEX_TO_BUILDING.get(index, None)
+    if not repr:
+        raise KeyError('Language building repr no has key: {}'.format(index))
+    return repr
+
 
 class Language:
     def __init__(self, lang_file_path):

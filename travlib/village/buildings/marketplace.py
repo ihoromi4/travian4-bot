@@ -17,7 +17,7 @@ class Marketplace(building.Building):
         self._merchants_in_travel = 0
 
     def _update_merchants_data(self):
-        html = self.village_part.get_html({'id': self.id, 't': 0})
+        html = self.village_part.get_building_html({'id': self.id, 't': 0})
         soup = bs4.BeautifulSoup(html, 'html5lib')
         data = build.marketplace.parse_t0(soup)
         self._free_merchants = data['free_merchants']
@@ -46,7 +46,7 @@ class Marketplace(building.Building):
     merchants_in_travel = property(get_merchants_in_travel)
 
     def get_page_amount(self) -> int:
-        html = self.village_part.get_html({'id': self.id, 't': 1})
+        html = self.village_part.get_building_html({'id': self.id, 't': 1})
         soup = bs4.BeautifulSoup(html, 'html5lib')
         paginator = soup.find('div', {'class': 'paginator'})
         contents = paginator.children
@@ -61,7 +61,7 @@ class Marketplace(building.Building):
         return page_amount
 
     def get_page(self, page=1) -> list:
-        html = self.village_part.get_html({'id': self.id, 't': 1, 'page': page})
+        html = self.village_part.get_building_html({'id': self.id, 't': 1, 'page': page})
         soup = bs4.BeautifulSoup(html, 'html5lib')
         table = soup.find('table', {'id': "range"})
         rows = table.find_all('tr')[1:]
@@ -96,7 +96,7 @@ class Marketplace(building.Building):
 
     def send_resources(self, name_or_pos, res=[0, 0, 0, 0]) -> bool:
         login = self.village_part.village.login
-        html = self.village_part.get_html({'id': self.id, 't': '5'})
+        html = self.village_part.get_building_html({'id': self.id, 't': '5'})
         data = dict()
         for i in range(0, 4):
             data["r{}".format(i+1)] = str(res[i])

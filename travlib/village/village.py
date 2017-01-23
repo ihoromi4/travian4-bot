@@ -73,3 +73,11 @@ class Village:
     def get_building_by_id(self, id: int):
         return self.inner.get_building_by_id(id) or \
                 self.outer.get_building_by_id(id)
+
+    def get_building_by_repr(self, repr: str):
+        return self.inner.get_building(repr)
+
+    def get_building(self, repr):
+        if type(repr) is int:
+            return self.get_building_by_id(repr)
+        return self.get_building_by_repr(repr)

@@ -11,5 +11,10 @@ password = '2bd384f'
 
 acc = account.Account(url, name, password)
 
-#area = acc.map.get_area((-55, -20), map.Zoom.MAX)
-print(acc.map.get_pos_info((-56, -18)))
+for v in acc.villages:
+    print(v.name)
+
+village = acc.villages[0]
+
+marketplace = village.get_building('marketplace')
+print('m:', marketplace.free_merchants)
