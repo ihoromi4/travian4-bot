@@ -1,5 +1,6 @@
 from . import building
 from . import marketplace
+from . import tradeoffice
 from . import palace
 from . import residence
 from . import resourcefield
@@ -12,6 +13,7 @@ building_dict = {
     "ironmine": resourcefield.Ironmine,
     "cropland": resourcefield.Cropland,
     "marketplace": marketplace.Marketplace,
+    "tradeoffice": tradeoffice.Tradeoffice,
     "residence": residence.Residence,
     "palace": palace.Palace,
     "townhall": townhall.TownHall,

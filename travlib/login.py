@@ -30,7 +30,7 @@ class Login:
         self.timeout = 5.0
         self.relogin_delay = 0.33
         self.reconnections = 3
-        self.html_obsolescence_time = 3.0
+        self.html_obsolescence_time = 1.0
         self.loggedin = False
         self.ajax_token = None
         self.html_sources = dict()

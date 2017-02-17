@@ -10,7 +10,7 @@ from . import building
 class Marketplace(building.Building):
     def __init__(self, village_part, name, id, level):
         building.Building.__init__(self, village_part, name, id, level)
-        self.eng_name = 'marketplace'
+        # self.eng_name = 'marketplace'
         self._max_merchants = 0
         self._free_merchants = 0
         self._busy_on_marketplace_merchants = 0

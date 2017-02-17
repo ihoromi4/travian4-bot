@@ -5,16 +5,16 @@ url = 'http://ts70.travian.com/'
 name = 'bro'
 password = '2bd384f'
 
-# url = 'http://ts5.travian.ru/'
-# name = 'broo'
-# password = 'wA4iN_tYR'
+url = 'http://ts5.travian.ru/'
+name = 'broo'
+password = 'wA4iN_tYR'
 
 acc = account.Account(url, name, password)
 
-for v in acc.villages:
-    print(v.name)
-
-village = acc.villages[0]
-
-marketplace = village.get_building('marketplace')
-print('m:', marketplace.free_merchants)
+for village in acc.villages:
+    tradeoffice = village.get_building('tradeoffice')
+    if tradeoffice:
+        able_carry = tradeoffice.able_carry
+    else:
+        able_carry = 750
+    print('name: ', village.name, ', able carry:', able_carry)

@@ -1,6 +1,8 @@
 import time
 import random
 
+import logging
+
 from travlib import account
 
 url = 'http://ts5.travian.ru/'
@@ -27,33 +29,75 @@ settings = {
 }
 
 
-class VillageTransfer:
+class ResourceTransferNode:
     def __init__(self, village, setting: dict={}):
         self.village = village
         self.type = setting['type']
 
+    def get_marketplace(self):
+        return self.village.get_building('marketplace')
+    marketplace = property(get_marketplace)
+
+    def get_tradeoffice(self):
+        return self.village.get_building('tradeoffice')
+    tradeoffice = property(get_tradeoffice)
+
+    def get_able_carry(self):
+        if self.tradeoffice:
+            return self.tradeoffice.able_carry
+        else:
+            return 500
+    able_carry = property(get_able_carry)
+
+    def act_target(self):
+        logging.debug('target wait')
+
+    def act_source(self):
+        if not self.marketplace:
+            # в деревне нет рынка
+            return
+        if self.marketplace.free_merchants == 0:
+            # на рынке нет свободных торговцев
+            logging.debug('на рынке нет свободных торговцев')
+            return
+
+        capacity = self.able_carry * self.marketplace.free_merchants
+        max_resource = self.village.warehouse
+        limit_resource = 0.2 * max_resource
+        resources = self.village.resources
+        resources[3] = 0
+        free_resources = [max(0, r - limit_resource) for r in resources]
+
+        if capacity < sum(free_resources):
+            factor = capacity / sum(free_resources)
+            free_resources = [int(r * factor) for r in free_resources]
+
+        transfer_target = (-80, 92)
+        transfer_task = free_resources
+
+        self.marketplace.send_resources(transfer_target, transfer_task)
+
+        logging.debug('ресурсы отправлены')
+
     def update(self):
-        marketplace = self.village.get_building('marketplace')
         if self.type == TARGET:
-            print('target wait')
-            return
-        if marketplace.free_merchants == 0:
-            print('source no free merchants')
-            return
-        print('source send')
+            self.act_target()
+        elif self.type == SOURCE:
+            self.act_source()
 
 
-class ResourceTransfer:
+class ResourceTransferNet:
     def __init__(self, account: account.Account, settings: dict={}):
-        self.transfers = []
+        self.nodes = []
         for id in settings:
             village = account.get_village_by_id(id)
-            tr = VillageTransfer(village, settings[id])
-            self.transfers.append(tr)
+            node = ResourceTransferNode(village, settings[id])
+            self.nodes.append(node)
 
     def update(self):
-        for transfer in self.transfers:
-            transfer.update()
+        for node in self.nodes:
+            node.update()
+            time.sleep(3.0)
 
 
 def watch(self):
@@ -92,5 +136,14 @@ def watch(self):
         time.sleep(30 + 30 * random.random())
 
 
-transfer = ResourceTransfer(acc, settings)
-transfer.update()
+def start_transfer_loop():
+    from time import sleep
+    transfer_net = ResourceTransferNet(acc, settings)
+
+    while True:
+        logging.debug('Просмотр деревень...')
+        transfer_net.update()
+        sleep(60 * 5)
+
+if __name__ == '__main__':
+    start_transfer_loop()
