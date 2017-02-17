@@ -26,26 +26,35 @@ class Marketplace(building.Building):
         self._merchants_in_travel = data['merchants_in_travel']
 
     def get_max_merchants(self) -> int:
+        """ Возвращает максимальное количество торговцев """
         self._update_merchants_data()
         return self._max_merchants
     max_merchants = property(get_max_merchants)
 
     def get_free_merchants(self) -> int:
+        """ Возвращает количество не занятых торговцев """
         self._update_merchants_data()
         return self._free_merchants
     free_merchants = property(get_free_merchants)
 
     def get_busy_on_marketplace_merchants(self) -> int:
+        """ Возвращает количество торговцев занятых на рынке """
         self._update_merchants_data()
         return self._busy_on_marketplace_merchants
     busy_on_marketplace_merchants = property(get_busy_on_marketplace_merchants)
 
     def get_merchants_in_travel(self) -> int:
+        """ Возвращает количество торговцев находящихся в пути """
         self._update_merchants_data()
         return self._merchants_in_travel
     merchants_in_travel = property(get_merchants_in_travel)
 
+    def get_merchants_moves(self) -> list:
+        """ Возвращает спсок перемещений торговцев """
+        pass
+
     def get_page_amount(self) -> int:
+        """ Возвращает количество страниц с предложениями на рынке """
         html = self.village_part.get_building_html({'id': self.id, 't': 1})
         soup = bs4.BeautifulSoup(html, 'html5lib')
         paginator = soup.find('div', {'class': 'paginator'})
@@ -61,6 +70,7 @@ class Marketplace(building.Building):
         return page_amount
 
     def get_page(self, page=1) -> list:
+        """ Возвращает список предложений на указаной странице """
         html = self.village_part.get_building_html({'id': self.id, 't': 1, 'page': page})
         soup = bs4.BeautifulSoup(html, 'html5lib')
         table = soup.find('table', {'id': "range"})
@@ -88,6 +98,7 @@ class Marketplace(building.Building):
         return biddings
 
     def get_pages(self, max_page=99) -> list:
+        """ Возвращает список всех предложений """
         biddings = []
         max_page = min(max_page, self.get_page_amount())
         for page in range(1, max_page + 1):
@@ -95,6 +106,7 @@ class Marketplace(building.Building):
         return biddings
 
     def send_resources(self, name_or_pos, res=[0, 0, 0, 0]) -> bool:
+        """ Отправляет ресурсы в указаную деревню """
         login = self.village_part.village.login
         html = self.village_part.get_building_html({'id': self.id, 't': '5'})
         data = dict()
