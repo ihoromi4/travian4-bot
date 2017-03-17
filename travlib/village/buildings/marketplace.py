@@ -17,6 +17,7 @@ class Marketplace(building.Building):
         self._merchants_in_travel = 0
 
     def _update_merchants_data(self):
+        """ Обновляет информацию о количестве торговцев """
         html = self.village_part.get_building_html({'id': self.id, 't': 0})
         soup = bs4.BeautifulSoup(html, 'html5lib')
         data = build.marketplace.parse_t0(soup)
@@ -105,22 +106,26 @@ class Marketplace(building.Building):
             biddings.extend(self.get_page(page))
         return biddings
 
-    def send_resources(self, name_or_pos, res=[0, 0, 0, 0]) -> bool:
+    def send_resources(self, target, resources=[0, 0, 0, 0]) -> bool:
         """ Отправляет ресурсы в указаную деревню """
+        if not type(resources) in (list, tuple):
+            raise TypeError("type of argument res must be list or tuple, not {}".format(type(resources)))
+        if len(resources) != 4:
+            raise TypeError('len of argument res must be 4')
         login = self.village_part.village.login
         html = self.village_part.get_building_html({'id': self.id, 't': '5'})
         data = dict()
         for i in range(0, 4):
-            data["r{}".format(i+1)] = str(res[i])
+            data["r{}".format(i+1)] = str(resources[i])
         data['dname'] = ''
         data['x'] = ''
         data['y'] = ''
-        if type(name_or_pos) is str:
-            data['dname'] = name_or_pos
-        elif type(name_or_pos) in (tuple, list):
-            if len(name_or_pos) == 2:
-                data['x'] = str(name_or_pos[0])
-                data['y'] = str(name_or_pos[1])
+        if type(target) is str:
+            data['dname'] = target
+        elif type(target) in (tuple, list):
+            if len(target) == 2:
+                data['x'] = str(target[0])
+                data['y'] = str(target[1])
         else:
             raise TypeError("name_or_pos wrong argument type")
         data['id'] = str(self.id)
@@ -131,10 +136,8 @@ class Marketplace(building.Building):
         response = json.loads(html)['response']
         if response['error']:
             print('send resource: error true')
+            print(response['data'])
             return False
-        print(response['data'])
-        with open('mpt5.html', 'w') as stream:
-            stream.write(html)
         bs = bs4.BeautifulSoup(html, 'html5lib')
         form = bs.find('form')
         if not form:
