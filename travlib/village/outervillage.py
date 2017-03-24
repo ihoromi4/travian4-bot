@@ -14,7 +14,7 @@ class OuterVillage:
         self.__create_resource_fields()
 
     def get_html(self, params={}):
-        return self.village.get_html("parsebuild.php", params=params)
+        return self.village.get_html("build.php", params=params)
 
     def get_buildings(self):
         self._update_buildings()

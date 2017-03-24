@@ -42,9 +42,9 @@ class RallyPoint(building.Building):
 
     def step_1(self, pos, troops, c=4):
         send_troops_page = 2
-        html = self.village_part.village.login.get_html('parsebuild.php', {'id': self.id, 'tt': send_troops_page})
+        html = self.village_part.village.login.get_html('build.php', {'id': self.id, 'tt': send_troops_page})
         soup = bs4.BeautifulSoup(html, 'html5lib')
-        div_build = soup.find('div', {'id': 'parsebuild'})
+        div_build = soup.find('div', {'id': 'build'})
         data = dict()
         data['x'] = pos[0]
         data['y'] = pos[1]
@@ -61,9 +61,9 @@ class RallyPoint(building.Building):
     def step_2(self, data, troops):
         send_troops_page = 2
         params = {'id': self.id, 'tt': send_troops_page}
-        html = self.village_part.village.login.server_post('parsebuild.php', data=data, params=params)
+        html = self.village_part.village.login.server_post('build.php', data=data, params=params)
         soup = bs4.BeautifulSoup(html, 'html5lib')
-        div_build = soup.find('div', {'id': 'parsebuild'})
+        div_build = soup.find('div', {'id': 'build'})
         # data = {}
         data['timestamp'] = div_build.find('input', {'name': 'timestamp'})['value']
         data['timestamp_checksum'] = div_build.find('input', {'name': 'timestamp_checksum'})['value']
@@ -87,7 +87,7 @@ class RallyPoint(building.Building):
         data['dname'] = div_build.find('input', {'name': 'dname'})['value']
         data['x'] = div_build.find('input', {'name': 'x'})['value']
         data['y'] = div_build.find('input', {'name': 'y'})['value']
-        html = self.village_part.village.login.server_post('parsebuild.php', data=data, params=params)
+        html = self.village_part.village.login.server_post('build.php', data=data, params=params)
 
     def send_troops(self, pos, troops={'t5': 5}, c=4):
         # c = 2       # Reinforcement
