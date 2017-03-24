@@ -2,7 +2,7 @@ import bs4
 
 
 def parse_tradeoffice(soup: bs4.BeautifulSoup) -> int:
-    div = soup.find('div', {'id': 'build'})
+    div = soup.find('div', {'id': 'parsebuild'})
     if not div:
         return -1
     div = div.find('div', {'id': 'descriptionAndInfo'})

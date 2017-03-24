@@ -21,10 +21,10 @@ class InnerVillage:
 
     def get_html(self, params={}):      # obs
         raise TypeError('Устаревший метод!')
-        # return self.village.get_html("build.php", params=params)
+        # return self.village.get_html("parsebuild.php", params=params)
 
     def get_building_html(self, params={}) -> str:
-        """ Скачивает страницу GET http://<server>/build.php """
+        """ Скачивает страницу GET http://<server>/parsebuild.php """
         return self.village.get_html("build.php", params=params)
 
     def __create_buildings(self):

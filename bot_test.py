@@ -11,10 +11,9 @@ password = 'wA4iN_tYR'
 
 acc = account.Account(url, name, password)
 
-for village in acc.villages:
-    tradeoffice = village.get_building('tradeoffice')
-    if tradeoffice:
-        able_carry = tradeoffice.able_carry
-    else:
-        able_carry = 750
-    print('name: ', village.name, ', able carry:', able_carry)
+# v = acc.get_village_by_id(79385) # 1
+v = acc.get_village_by_id(84821)  # 2
+
+mp = v.get_building('marketplace')
+
+print(mp.get_merchants_moves())

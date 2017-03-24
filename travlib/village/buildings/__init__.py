@@ -8,6 +8,7 @@ from . import townhall
 from . import rallypoint
 
 building_dict = {
+    "building": building.Building,
     "woodcutter": resourcefield.Woodcutter,
     "claypit": resourcefield.Claypit,
     "ironmine": resourcefield.Ironmine,

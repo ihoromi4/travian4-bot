@@ -3,7 +3,7 @@ import re
 
 import bs4
 
-from ...travparse import build
+from ...travparse import parsebuild
 from . import building
 
 
@@ -20,7 +20,7 @@ class Marketplace(building.Building):
         """ Обновляет информацию о количестве торговцев """
         html = self.village_part.get_building_html({'id': self.id, 't': 0})
         soup = bs4.BeautifulSoup(html, 'html5lib')
-        data = build.marketplace.parse_t0(soup)
+        data = parsebuild.marketplace.parse_t0(soup)
         self._free_merchants = data['free_merchants']
         self._max_merchants = data['max_merchants']
         self._busy_on_marketplace_merchants = data['busy_on_marketplace_merchants']
@@ -52,9 +52,12 @@ class Marketplace(building.Building):
 
     def get_merchants_moves(self) -> list:
         """ Возвращает спсок перемещений торговцев """
-        pass
+        html = self.village_part.get_building_html({'id': self.id, 't': 5})
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+        data = parsebuild.marketplace.parse_t5(soup)
+        return data
 
-    def get_page_amount(self) -> int:
+    def get_exchange_pages_amount(self) -> int:
         """ Возвращает количество страниц с предложениями на рынке """
         html = self.village_part.get_building_html({'id': self.id, 't': 1})
         soup = bs4.BeautifulSoup(html, 'html5lib')
@@ -70,7 +73,7 @@ class Marketplace(building.Building):
                 pass
         return page_amount
 
-    def get_page(self, page=1) -> list:
+    def get_exchange_page(self, page=1) -> list:
         """ Возвращает список предложений на указаной странице """
         html = self.village_part.get_building_html({'id': self.id, 't': 1, 'page': page})
         soup = bs4.BeautifulSoup(html, 'html5lib')
@@ -98,12 +101,12 @@ class Marketplace(building.Building):
             biddings.append(bid)
         return biddings
 
-    def get_pages(self, max_page=99) -> list:
+    def get_exchange_pages(self, max_page=99) -> list:
         """ Возвращает список всех предложений """
         biddings = []
-        max_page = min(max_page, self.get_page_amount())
+        max_page = min(max_page, self.get_exchange_pages_amount())
         for page in range(1, max_page + 1):
-            biddings.extend(self.get_page(page))
+            biddings.extend(self.get_exchange_page(page))
         return biddings
 
     def send_resources(self, target, resources=[0, 0, 0, 0]) -> bool:

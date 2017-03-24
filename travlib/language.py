@@ -1,6 +1,8 @@
+import logging
 import json
 
 BUILDINGS_REPR = {
+    (-1, "building"),
     (0, "buildingsite"),
     (1, "woodcutter"),
     (2, "claypit"),
@@ -49,7 +51,8 @@ def index_to_building_repr(index: int) -> str:
     """ Принимает идентификатор ГРАФИКИ постройки. Возвращает внутреннее представление """
     repr = DICT_INDEX_TO_BUILDING.get(index, None)
     if not repr:
-        raise KeyError('Language building repr no has key: {}'.format(index))
+        logging.error('Language building repr no has key: {}'.format(index))
+        repr = DICT_INDEX_TO_BUILDING.get(-1, None)
     return repr
 
 
@@ -85,5 +88,6 @@ class Language:
     def index_to_building_repr(self, index: int):
         repr = self.dict_index_to_building.get(index, None)
         if not repr:
-            raise KeyError('Language building repr no has key: {}'.format(index))
+            print('Language building repr no has key: {}'.format(index))
+            return self.dict_index_to_building.get(-1, None)
         return repr

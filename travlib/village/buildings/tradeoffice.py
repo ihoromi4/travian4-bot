@@ -3,7 +3,7 @@ import re
 
 import bs4
 
-from ...travparse import build
+from ...travparse import parsebuild
 from . import building
 
 
@@ -14,5 +14,5 @@ class Tradeoffice(building.Building):
     def get_able_carry(self) -> int:
         html = self.village_part.get_building_html({'id': self.id})
         soup = bs4.BeautifulSoup(html, 'html5lib')
-        return build.tradeoffice.parse_tradeoffice(soup)
+        return parsebuild.tradeoffice.parse_tradeoffice(soup)
     able_carry = property(get_able_carry)
