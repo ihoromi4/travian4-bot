@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication, qApp
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QAction, QPushButton
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QIcon
+from PyQt5 import uic
 
 from travlib import login
 from travlib import account
@@ -16,8 +17,6 @@ password = 'wA4iN_tYR'
 
 user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0'
 headers = {'User-Agent': user_agent}
-
-app = QApplication(sys.argv)
 
 
 class MainWindow(QMainWindow):
@@ -31,9 +30,8 @@ class MainWindow(QMainWindow):
         self.statusbar = self.statusBar()
         self.statusbar.showMessage("Ready to work!")
         # ---
+        uic.loadUi('data/ui/mainwindow.ui', self)
         self.init_menubar()
-        self.init_gui()
-        self.show()
 
     def init_travian(self):
         self.account = account.Account(url, name, password, headers)
@@ -52,26 +50,9 @@ class MainWindow(QMainWindow):
         file_menu = menubar.addMenu('&File')
         file_menu.addAction(exit_action)
 
-    def init_gui(self):
-        widget = QWidget(self)
-        policy = qtwidgets.QSizePolicy(
-            qtwidgets.QSizePolicy.Preferred,
-            qtwidgets.QSizePolicy.Preferred)
-        widget.setSizePolicy(policy)
-        #widget.setFixedSize(300, 300)
-
-        label1 = QLabel('fgr')
-        label2 = QLabel('hjr')
-        btn = QPushButton('Button')
-        btn.move(50, 50)
-        box = QVBoxLayout()
-        box.addStretch(1)
-        box.addWidget(label1)
-        box.addWidget(label2)
-        box.addWidget(btn)
-
-        widget.setLayout(box)
+app = QApplication(sys.argv)
 
 win = MainWindow()
+win.show()
 
 sys.exit(app.exec())
