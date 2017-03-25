@@ -29,7 +29,10 @@ def parse_t5(soup: bs4.BeautifulSoup) -> dict:
         2. Возвращение - возвращение своих торговцев
         3. Входящие - входящие торговцы из других деревень
     """
-    data = list()
+    result = dict()
+    result['outgoing'] = []
+    result['incoming'] = []
+    result['inbound'] = []
 
     form = soup.find('form', {'id': 'merchantsOnTheWayFormular'})
     span = form.find('span', {'id': 'merchantsOnTheWay'})
@@ -67,9 +70,9 @@ def parse_t5(soup: bs4.BeautifulSoup) -> dict:
         span = td.find('span')
         if 'class' in span.attrs:  # бинарный признак - пустой ли торговец
             # в этом случае class="none"
-            move['is_empty'] = True  # да, торговец пустой
+            is_empty = True  # да, торговец пустой
         else:
-            move['is_empty'] = False  # торговец переносит ресурсы
+            is_empty = False  # торговец переносит ресурсы
         pattern = r'\s+'.join([r'(\d+)'] * 4)
         resources = re.findall(pattern, span.text)[0]
         resources = [int(r) for r in resources]
@@ -82,6 +85,15 @@ def parse_t5(soup: bs4.BeautifulSoup) -> dict:
         move['time'] = time
         move['time_at'] = time_at
         move['resources'] = resources
-        data.append(move)
+        if is_empty:  # признак возвращающегося
+            result['inbound'].append(move)
+        else:
+            parts = (' in ', ' в ')  # маркеры в языках eng/ru/ua
+            # проверяем есть ли хоть один маркер в td_dorf.text
+            flag = bool(sum([(part in td_dorf.text) for part in parts]))
+            if flag:  # признак исходящего торговца
+                result['outgoing'].append(move)
+            else:  # иначе это входящий торговец
+                result['incoming'].append(move)
 
-    return data
+    return result

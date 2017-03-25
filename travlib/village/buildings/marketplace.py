@@ -54,8 +54,8 @@ class Marketplace(building.Building):
         """ Возвращает спсок перемещений торговцев """
         html = self.village_part.get_building_html({'id': self.id, 't': 5})
         soup = bs4.BeautifulSoup(html, 'html5lib')
-        data = parsebuild.marketplace.parse_t5(soup)
-        return data
+        result = parsebuild.marketplace.parse_t5(soup)
+        return result
 
     def get_exchange_pages_amount(self) -> int:
         """ Возвращает количество страниц с предложениями на рынке """
