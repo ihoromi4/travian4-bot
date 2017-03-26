@@ -14,4 +14,4 @@ acc = account.Account(url, name, password)
 # v = acc.get_village_by_id(79385) # 1
 v = acc.get_village_by_id(84821)  # 2
 
-print(v.resources)
+print(v.production)

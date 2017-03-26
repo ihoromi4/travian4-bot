@@ -58,6 +58,8 @@ class ResourceTransferNode:
         max_resource = self.village.warehouse
         max_crop = self.village.granary
         resources = self.village.resources
+        production = self.village.production
+        production_time = 1
         if self.marketplace:
             moves = self.marketplace.get_merchants_moves()
             moves_incoming = moves['incoming']
@@ -68,10 +70,12 @@ class ResourceTransferNode:
         max_resources = [max_resource]*3 + [max_crop]
         needs = [(max_resources[i] - resources[i]) for i in range(4)]
 
+        needs = [(needs[i] - max(0, production[i]) * production_time) for i in range(4)]
+
         for move in move_resources:
             needs = [(needs[i] - move[i]) for i in range(4)]
 
-        needs = [max(0, r) for r in needs]
+        needs = [max(0, int(r)) for r in needs]
 
         print('needs:', needs)
 
@@ -90,11 +94,13 @@ class ResourceTransferNode:
             return
 
         capacity = self.able_carry * self.marketplace.free_merchants
-        max_resource = self.village.warehouse
-        limit_resource = 0.2 * max_resource
+        warehouse = self.village.warehouse
+        granary = self.village.granary
+        limit_percent = 0.2
+        max_resource = [warehouse] * 3 + [granary]
         resources = self.village.resources
         # resources[3] = 0
-        free_resources = [max(0.0, r - limit_resource) for r in resources]
+        free_resources = [max(0.0, resources[i] - max_resource[i] * limit_percent) for i in range(4)]
 
         if capacity < sum(free_resources):
             factor = capacity / sum(free_resources)

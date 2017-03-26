@@ -55,10 +55,13 @@ class Village:
     resources = property(get_resources)
 
     def get_production(self) -> list:
+        """
+        Возвращает информацию о производстве в выбраной деревне
+        """
         html_text = self.login.load_dorf1(self.id)
-        pattern = r'‎&#x202d;&#x202d;(\d*)&#x202c;&#x202c;'
-        raw_production = re.findall(pattern, html_text)
-        production = [int(p) for p in raw_production]
+        pattern = r'"l\d": (-?\d+)'
+        result = re.findall(pattern, html_text)[0:4]
+        production = [int(p) for p in result]
         return production
     production = property(get_production)
 
