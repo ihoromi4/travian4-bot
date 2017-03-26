@@ -63,7 +63,7 @@ class ResourceTransferNode:
             moves_incoming = moves['incoming']
             move_resources = [move['resources'] for move in moves_incoming]
         else:
-            move_resources = []
+            return [0] * 4
 
         max_resources = [max_resource]*3 + [max_crop]
         needs = [(max_resources[i] - resources[i]) for i in range(4)]
