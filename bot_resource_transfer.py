@@ -19,13 +19,18 @@ SOURCE = 2
 
 settings = {
     79385: {'type': TARGET},  # 1.
-    84821: {'type': TARGET},
-    86917: {'type': SOURCE},
-    88380: {'type': SOURCE},
-    89791: {'type': SOURCE},
-    90902: {'type': SOURCE},
-    91726: {'type': SOURCE},
-    92436: {'type': SOURCE}
+    84821: {'type': TARGET},  # 2.
+    86917: {'type': SOURCE},  # 3.
+    88380: {'type': SOURCE},  # 4.
+    89791: {'type': SOURCE},  # 5.
+    90902: {'type': SOURCE},  # 6.
+    91726: {'type': SOURCE},  # 7.
+    92436: {'type': SOURCE},  # 8.
+    93405: {'type': TARGET},  # 9.
+    94524: {'type': TARGET},  # 10.
+    95147: {'type': TARGET},  # 11.
+    95965: {'type': TARGET},  # 12.
+    96741: {'type': TARGET}  # 13.
 }
 
 
@@ -49,10 +54,33 @@ class ResourceTransferNode:
             return 500
     able_carry = property(get_able_carry)
 
-    def act_target(self):
-        logging.debug('target wait')
+    def need_resources(self):
+        max_resource = self.village.warehouse
+        max_crop = self.village.granary
+        resources = self.village.resources
+        if self.marketplace:
+            moves = self.marketplace.get_merchants_moves()
+            moves_incoming = moves['incoming']
+            move_resources = [move['resources'] for move in moves_incoming]
+        else:
+            move_resources = []
 
-    def act_source(self):
+        max_resources = [max_resource]*3 + [max_crop]
+        needs = [(max_resources[i] - resources[i]) for i in range(4)]
+
+        for move in move_resources:
+            needs = [(needs[i] - move[i]) for i in range(4)]
+
+        needs = [max(0, r) for r in needs]
+
+        print('needs:', needs)
+
+        return needs
+
+    def is_need_resources(self):
+        return sum(self.need_resources()) > 0
+
+    def send(self, target):
         if not self.marketplace:
             # в деревне нет рынка
             return
@@ -65,25 +93,34 @@ class ResourceTransferNode:
         max_resource = self.village.warehouse
         limit_resource = 0.2 * max_resource
         resources = self.village.resources
-        resources[3] = 0
-        free_resources = [max(0, r - limit_resource) for r in resources]
+        # resources[3] = 0
+        free_resources = [max(0.0, r - limit_resource) for r in resources]
 
         if capacity < sum(free_resources):
             factor = capacity / sum(free_resources)
             free_resources = [int(r * factor) for r in free_resources]
 
-        transfer_target = (-80, 92)
+        need_to_send = target.need_resources()
+        print('need resources:', need_to_send)
+
+        free_resources = [min(need_to_send[i], free_resources[i]) for i in range(4)]
+
+        transfer_target = target.village.pos
         transfer_task = free_resources
 
         self.marketplace.send_resources(transfer_target, transfer_task)
 
         logging.debug('ресурсы отправлены')
 
-    def update(self):
-        if self.type == TARGET:
-            self.act_target()
-        elif self.type == SOURCE:
-            self.act_source()
+        return True
+
+    def send_to(self, targets):
+        for node in targets:
+            if node.is_need_resources():
+                print('need resources')
+                if self.send(node):
+                    print('send resources')
+                    return True
 
 
 class ResourceTransferNet:
@@ -95,8 +132,10 @@ class ResourceTransferNet:
             self.nodes.append(node)
 
     def update(self):
-        for node in self.nodes:
-            node.update()
+        targets = [node for node in self.nodes if node.type == TARGET]
+        sources = [node for node in self.nodes if node.type == SOURCE]
+        for node in sources:
+            node.send_to(targets)
             time.sleep(3.0)
 
 

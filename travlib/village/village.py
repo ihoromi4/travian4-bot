@@ -48,7 +48,7 @@ class Village:
 
     def get_resources(self) -> list:
         html_text = self.login.load_dorf1(self.id)
-        pattern = r'<span id="l\d" class="value">(\d*)</span>'
+        pattern = r'<span id="l\d" class="value(?: alert)?">(\d*)</span>'
         raw_resources = re.findall(pattern, html_text)
         resources = [int(p) for p in raw_resources]
         return resources
