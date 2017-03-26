@@ -18,19 +18,19 @@ TARGET = 1
 SOURCE = 2
 
 settings = {
-    79385: {'type': TARGET},  # 1.
-    84821: {'type': TARGET},  # 2.
-    86917: {'type': SOURCE},  # 3.
-    88380: {'type': SOURCE},  # 4.
-    89791: {'type': SOURCE},  # 5.
-    90902: {'type': SOURCE},  # 6.
-    91726: {'type': SOURCE},  # 7.
-    92436: {'type': SOURCE},  # 8.
-    93405: {'type': TARGET},  # 9.
-    94524: {'type': TARGET},  # 10.
-    95147: {'type': TARGET},  # 11.
-    95965: {'type': TARGET},  # 12.
-    96741: {'type': TARGET}  # 13.
+    79385: {'type': TARGET, 'priory': 1},  # 1.
+    84821: {'type': TARGET, 'priory': 2},  # 2.
+    86917: {'type': SOURCE, 'priory': 10},  # 3.
+    88380: {'type': SOURCE, 'priory': 10},  # 4.
+    89791: {'type': SOURCE, 'priory': 10},  # 5.
+    90902: {'type': SOURCE, 'priory': 10},  # 6.
+    91726: {'type': SOURCE, 'priory': 10},  # 7.
+    92436: {'type': SOURCE, 'priory': 10},  # 8.
+    93405: {'type': TARGET, 'priory': 3},  # 9.
+    94524: {'type': TARGET, 'priory': 3},  # 10.
+    95147: {'type': TARGET, 'priory': 3},  # 11.
+    95965: {'type': TARGET, 'priory': 0},  # 12.
+    96741: {'type': TARGET, 'priory': 0}  # 13.
 }
 
 
@@ -38,6 +38,7 @@ class ResourceTransferNode:
     def __init__(self, village, setting: dict={}):
         self.village = village
         self.type = setting['type']
+        self.priory = setting['priory']
 
     def get_marketplace(self):
         return self.village.get_building('marketplace')
@@ -96,7 +97,7 @@ class ResourceTransferNode:
         capacity = self.able_carry * self.marketplace.free_merchants
         warehouse = self.village.warehouse
         granary = self.village.granary
-        limit_percent = 0.2
+        limit_percent = 0.1
         max_resource = [warehouse] * 3 + [granary]
         resources = self.village.resources
         # resources[3] = 0
@@ -139,6 +140,8 @@ class ResourceTransferNet:
 
     def update(self):
         targets = [node for node in self.nodes if node.type == TARGET]
+        key = lambda x: x.priory
+        targets.sort(key=key)
         sources = [node for node in self.nodes if node.type == SOURCE]
         for node in sources:
             node.send_to(targets)
