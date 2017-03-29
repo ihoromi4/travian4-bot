@@ -14,8 +14,20 @@ headers = {'User-Agent': user_agent}
 
 acc = account.Account(url, name, password, headers)
 
-TARGET = 1
-SOURCE = 2
+# Типы поселений (битовые маски):
+IGNORE = 0  # поселение игнорируется
+
+DEVELOPMENT = 2**0  # поселение с ресурсными полями не максимального уровня
+# в такие деревни поставляются ресурсы для застройки
+
+BARRACKS = 2**1  # деревня производящая войска (нуждается в зерне)
+
+RESOURCES = 2**2  # деревня производит ресурсы
+CROP = 2**3  # дереня производит зерно
+
+SOURCE = RESOURCES | CROP  # деревня производит и ресурсы и зерно
+
+TARGET = DEVELOPMENT | BARRACKS  # требует ресурсов для построек и войск
 
 settings = {
     79385: {'type': TARGET, 'priory': 1},  # 1.
@@ -35,17 +47,19 @@ settings = {
 
 
 class ResourceTransferNode:
-    def __init__(self, village, setting: dict={}):
+    def __init__(self, village, setting: dict = {}):
         self.village = village
         self.type = setting['type']
         self.priory = setting['priory']
 
     def get_marketplace(self):
         return self.village.get_building('marketplace')
+
     marketplace = property(get_marketplace)
 
     def get_tradeoffice(self):
         return self.village.get_building('tradeoffice')
+
     tradeoffice = property(get_tradeoffice)
 
     def get_able_carry(self):
@@ -53,6 +67,7 @@ class ResourceTransferNode:
             return self.tradeoffice.able_carry
         else:
             return 500
+
     able_carry = property(get_able_carry)
 
     def need_resources(self):
@@ -68,7 +83,7 @@ class ResourceTransferNode:
         else:
             return [0] * 4
 
-        max_resources = [max_resource]*3 + [max_crop]
+        max_resources = [max_resource] * 3 + [max_crop]
         needs = [(max_resources[i] - resources[i]) for i in range(4)]
 
         needs = [(needs[i] - max(0, production[i]) * production_time) for i in range(4)]
@@ -131,7 +146,7 @@ class ResourceTransferNode:
 
 
 class ResourceTransferNet:
-    def __init__(self, account: account.Account, settings: dict={}):
+    def __init__(self, account: account.Account, settings: dict = {}):
         self.nodes = []
         for id in settings:
             village = account.get_village_by_id(id)
@@ -192,6 +207,7 @@ def start_transfer_loop():
         logging.debug('Просмотр деревень...')
         transfer_net.update()
         sleep(60 * 5)
+
 
 if __name__ == '__main__':
     start_transfer_loop()
