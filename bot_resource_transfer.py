@@ -3,11 +3,21 @@ import random
 
 import logging
 
+import requests
+
 from travianapi import account
 
-url = 'http://ts5.travian.ru/'
-name = 'broo'
-password = 'wA4iN_tYR'
+url_api = 'http://igoromi4.pythonanywhere.com/api/accounts'
+response = requests.get(url_api)
+data = response.json()
+
+print('accounts:', data)
+
+data = data[0]
+
+url = data['url']  # 'http://ts5.travian.ru/'
+name = data['username']  # 'broo'
+password = data['password']  # 'wA4iN_tYR'
 
 user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0'
 headers = {'User-Agent': user_agent}
