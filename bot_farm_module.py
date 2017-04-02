@@ -2,7 +2,7 @@ import time
 import configparser
 import json
 
-from travlib import account
+from travianapi import account
 
 config = configparser.ConfigParser()
 config.read('config.ini')

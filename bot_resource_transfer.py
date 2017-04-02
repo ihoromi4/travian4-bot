@@ -3,7 +3,7 @@ import random
 
 import logging
 
-from travlib import account
+from travianapi import account
 
 url = 'http://ts5.travian.ru/'
 name = 'broo'

@@ -65,11 +65,11 @@ class Language:
         self.dict_building_to_index = dict(((a, b) for a, b in BUILDINGS_REPR))
 
     def load_data(self):
-        with open(self.lang_file_path, 'r', encoding='utf-8') as file:
+        with open(self.lang_file_path, 'r') as file:
             self.data = json.load(file)
 
     def save_data(self):
-        with open(self.lang_file_path, 'w', encoding='utf-8') as file:
+        with open(self.lang_file_path, 'w') as file:
             json.dump(self.data, file)
 
     def set_repr_to_local_language(self, repr: str, loc_lang: str):
