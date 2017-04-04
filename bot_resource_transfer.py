@@ -1,23 +1,31 @@
 import time
 import random
-
 import logging
-
 import requests
 
 from travianapi import account
 
-url_api = 'http://igoromi4.pythonanywhere.com/api/accounts'
-response = requests.get(url_api)
-data = response.json()
+import travianbot
+from travianbot import exceptions
+from travianbot.web import interaction
 
-print('accounts:', data)
+url_api = 'http://igoromi4.pythonanywhere.com'
+url_api = 'http://127.0.0.1:5000'
 
-data = data[0]
+version_ok = interaction.verification(url_api, travianbot.__version_tuple__)
+if not version_ok:
+    print('Please, load new bot version')
+    raise exceptions.VersionError()
 
-url = data['url']  # 'http://ts5.travian.ru/'
-name = data['username']  # 'broo'
-password = data['password']  # 'wA4iN_tYR'
+accounts = interaction.load_accounts(url_api)
+
+print('accounts:', accounts)
+
+accounts = accounts[0]
+
+url = accounts['url']  # 'http://ts5.travian.ru/'
+name = accounts['username']  # 'broo'
+password = accounts['password']  # 'wA4iN_tYR'
 
 user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0'
 headers = {'User-Agent': user_agent}
