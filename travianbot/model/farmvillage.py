@@ -1,7 +1,7 @@
-import time
 import random
+import time
 
-from . import statemachine
+from travianbot.model import statemachine
 
 
 class FarmVillage(statemachine.StateMachine):

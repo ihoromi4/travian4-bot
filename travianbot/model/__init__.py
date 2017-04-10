@@ -1,0 +1,2 @@
+
+from .facade import Model

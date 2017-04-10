@@ -1,4 +1,4 @@
-from . import farmvillage
+from travianbot.model import farmvillage
 
 
 class FarmService:
