@@ -20,6 +20,7 @@ class BotService(StateMachine):
         self.account = None
 
         self.thread = threading.Thread(target=self.run)
+        self.thread.daemon = True
         self.thread.start()
 
     def close(self) -> None:

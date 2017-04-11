@@ -25,8 +25,8 @@ view_settings = {
 }
 
 model = Model()
-controller = Controller()
 view = View(view_settings)
+controller = Controller(model, view)
 
 # model.open_service(account_settings)
 model.run()

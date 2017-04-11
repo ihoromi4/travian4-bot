@@ -1,18 +1,24 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication
+import observer
 
 from .mainwindow import MainWindow
 
 
-class View:
+class View(observer.Observable):
     def __init__(self, settings: dict):
         self.settings = settings
 
         self.app = QApplication(sys.argv)
 
-        self.win = MainWindow(settings)
+        self.mainwindow = MainWindow(settings)
+
+        self.mainwindow.pushButton.clicked.connect(self.on_click)
+
+    def on_click(self):
+        self.on_click()
 
     def show(self):
-        self.win.show()
+        self.mainwindow.show()
         sys.exit(self.app.exec())
