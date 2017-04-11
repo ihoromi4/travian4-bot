@@ -11,20 +11,29 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.settings = settings
+        # ---
+        uic.loadUi(settings['ui_mainwindow'], self)
 
         self.setGeometry(130, 22, 500, 500)
         self.setWindowTitle('Auto-Travian')
+
         icon = QIcon(settings['icon_path'])
         self.setWindowIcon(icon)
 
         self.statusbar = self.statusBar()
-        self.statusbar.showMessage("Ready to work!")
-        # ---
-        uic.loadUi(settings['ui_mainwindow'], self)
-        self.init_menubar()
+        self.status = "Ready to work!"
+        # self.init_menubar()
+
+    def get_status(self) -> str:
+        return ''
+
+    def set_status(self, message: str) -> None:
+        self.statusbar.showMessage(message)
+    status = property(get_status, set_status)
 
     def init_menubar(self):
         icon = QIcon(self.settings['icon_path'])
+
         exit_action = QAction(icon, '&Exit', self)
         exit_action.setShortcut('Ctrl+Q')
         exit_action.setStatusTip('Exit application')

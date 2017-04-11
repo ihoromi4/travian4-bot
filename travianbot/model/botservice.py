@@ -1,15 +1,18 @@
 import threading
 
+import observer
+
 from .statemachine import StateMachine
 
 from travianapi import account
 
 
-class BotService(StateMachine):
+class BotService(StateMachine, observer.Observable):
     """ Обьединяет функции управления отдельным аккаунтом """
 
     def __init__(self, settings: dict):
-        super(BotService, self).__init__()
+        super(StateMachine, self).__init__()
+        super(observer.Observable, self).__init__()
 
         self.settings = settings
         self.url = settings['url']
