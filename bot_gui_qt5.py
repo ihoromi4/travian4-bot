@@ -1,13 +1,11 @@
+import json
+
 from travianbot.model import Model
 from travianbot.controller import Controller
 from travianbot.view import View
 
-view_settings = {
-    'mainwindow_title': 'Auto-Travian',
-    'icon_path': 'data/travbot.png',
-    'ui_dir': 'data/ui',
-    'ui_mainwindow': 'data/ui/mainwindow.ui'
-}
+with open('data/guiset.json') as file:
+    view_settings = json.load(file)
 
 model = Model()
 view = View(view_settings)
