@@ -1,5 +1,5 @@
 {
-    "mainwindow_title": "Auto-Travian",
+    "mainwindow_title": "Travian Legends Bot",
     "icon_path": "data/travbot.png",
     "ui_dir": "data/ui",
     "ui_mainwindow": "data/ui/mainwindow.ui"

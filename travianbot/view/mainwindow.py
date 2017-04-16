@@ -15,7 +15,7 @@ class MainWindow(QMainWindow):
         uic.loadUi(settings['ui_mainwindow'], self)
 
         self.setGeometry(130, 22, 500, 500)
-        self.setWindowTitle('Auto-Travian')
+        self.setWindowTitle(settings['mainwindow_title'])
 
         icon = QIcon(settings['icon_path'])
         self.setWindowIcon(icon)
