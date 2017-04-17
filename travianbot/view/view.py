@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication
 import observer
 
 from .mainwindow import MainWindow
+from .signindialog import SignUpDialog
 
 
 class View(observer.Observable):
@@ -23,4 +24,11 @@ class View(observer.Observable):
 
     def show(self):
         self.mainwindow.show()
+
+        dialog = SignUpDialog(self.mainwindow, self.settings)
+        result = dialog.open_dialog()
+
+        print('email:', result['email'])
+        print('password:', result['password'])
+
         sys.exit(self.app.exec())
