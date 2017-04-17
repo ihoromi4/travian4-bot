@@ -8,16 +8,17 @@ from .signindialog import SignUpDialog
 
 
 class View(observer.Observable):
-    def __init__(self, settings: dict):
+    def __init__(self, settings: dict, config: dict):
         super(observer.Observable, self).__init__()
 
         self.settings = settings
+        self.config = config
 
         self.app = QApplication(sys.argv)
 
         self.mainwindow = MainWindow(settings)
 
-        self.mainwindow.button_add_new_profile.clicked.connect(self.on_click)
+        self.mainwindow.button_new_account.clicked.connect(self.on_click)
 
     def on_click(self):
         self.on_click()
@@ -26,7 +27,7 @@ class View(observer.Observable):
         self.mainwindow.show()
 
         dialog = SignUpDialog(self.mainwindow, self.settings)
-        result = dialog.open_dialog()
+        result = dialog.open_dialog(self.config)
 
         print('email:', result['email'])
         print('password:', result['password'])

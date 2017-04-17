@@ -7,8 +7,11 @@ from travianbot.view import View
 with open('data/guiset.json') as file:
     view_settings = json.load(file)
 
+with open('config.json') as file:
+    config = json.load(file)
+
 model = Model()
-view = View(view_settings)
+view = View(view_settings, config)
 controller = Controller(model, view)
 
 view.show()

@@ -15,7 +15,10 @@ class SignUpDialog(QDialog):
         self.button_exit.clicked.connect(self.exit)
         self.button_ok.clicked.connect(self.close)
 
-    def open_dialog(self):
+    def open_dialog(self, config: dict):
+        self.edit_email.setText(config['email'])
+        self.edit_password.setText(config['password'])
+
         self.show()
         self.exec()
 
