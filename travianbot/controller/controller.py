@@ -23,7 +23,10 @@ class Controller:
         self.model = model
         self.view = view
 
-        self.view.on_new_account.on(self.open_service)
+        self.view.on_new_account.on(self.on_new_account)
+
+    def on_new_account(self):
+        self.view.new_account_card()
 
     def open_service(self):
         self.model.open_service(account_settings)

@@ -41,6 +41,20 @@ class View(observer.Observable):
 
         sys.exit(self.app.exec())
 
+    def new_account_card(self):
+        widget_cards_id = 0
+        parrent = self.mainwindow.stacked_widget.widget(widget_cards_id)
+
+        frame = QFrame(parrent)
+        uic.loadUi(self.settings['ui_newplayingcard'], frame)
+
+        layout = parrent.findChild(QHBoxLayout)
+        items_count = layout.count()
+        offset = 2
+        layout.insertWidget(items_count - offset, frame)
+
+        frame.show()
+
     def add_account_card(self, config: dict):
         widget_cards_id = 0
         parrent = self.mainwindow.stacked_widget.widget(widget_cards_id)
