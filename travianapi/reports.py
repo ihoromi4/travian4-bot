@@ -27,28 +27,39 @@ report_types = [
 
 
 class Reports:
-    def __init__(self, account):
+    def __init__(self, account: object):
         self.account = account
         self.login = account.login
-        # ---
-        html = self.login.server_get('berichte.php')
-        soup = bs4.BeautifulSoup(html, 'html5lib')
-        button_submit = soup.find('button', {'name': 'del'})
-        self.word_delete = button_submit['value']
-        button_submit = soup.find('button', {'name': 'mark_as_read'})
-        self.word_mark_as_read = button_submit['value']
 
-    def mark_readed_report(self, id: int, toggle_state:int = 0):
-        self.login.server_get('berichte.php', params={'id': id, 's': 0, 'toggleState': toggle_state})
+    def get_words(self):
+        """ Достает из страницы отчетов слова-маркеры """
+
+        response = self.login.get('berichte.php')
+        html = response.text
+        soup = bs4.BeautifulSoup(html, 'html5lib')
+
+        data = {}
+
+        button_submit = soup.find('button', {'name': 'del'})
+        data['word_delete'] = button_submit['value']
+
+        button_submit = soup.find('button', {'name': 'mark_as_read'})
+        data['word_mark_as_read'] = button_submit['value']
+
+        return data
+
+    def mark_readed_report(self, id: int, toggle_state: int = 0):
+        self.login.get('berichte.php', params={'id': id, 's': 0, 'toggleState': toggle_state})
 
     def delete_report(self, id: int):
-        self.login.server_get('berichte.php', params={'n1': id, 'del': 1})
+        self.login.get('berichte.php', params={'n1': id, 'del': 1})
 
     def __get_reports_table(self, t: int=0, mode: str=None):
         params = {'t': t}
         if mode:
             params['opt'] = mode
-        html = self.login.server_get('berichte.php', params=params)
+        response = self.login.get('berichte.php', params=params)
+        html = response.text
         soup = bs4.BeautifulSoup(html, 'html5lib')
         li_reports = soup.find('li', {'class': 'reports'})
         div_content = li_reports.find('div', {'class': 'speechBubbleContent'})
@@ -67,7 +78,7 @@ class Reports:
             return
         data = {
             'page': 1,
-            'del': self.word_delete,
+            'del': self.get_words()['word_delete'],
             's': '1'
         }
         for tr_report in tr_reports:
@@ -78,7 +89,7 @@ class Reports:
             report_name = input_check['name']
             report_id = int(input_check['value'])
             data[report_name] = report_id
-        self.login.server_post('berichte.php', params={'t': 0}, data=data)
+        self.login.post('berichte.php', params={'t': 0}, data=data)
         self.clear()
 
     def mark_as_read_all(self):
@@ -89,7 +100,7 @@ class Reports:
             return
         data = {
             'page': 1,
-            'mark_as_read': self.word_mark_as_read,
+            'mark_as_read': self.get_words()['word_mark_as_read'],
             's': '1'
         }
         for tr_report in tr_reports:
@@ -100,7 +111,7 @@ class Reports:
             report_name = input_check['name']
             report_id = int(input_check['value'])
             data[report_name] = report_id
-        self.login.server_post('berichte.php', params={'t': 0}, data=data)
+        self.login.post('berichte.php', params={'t': 0}, data=data)
 
     def get_reports(self):
         table_reports = self.__get_reports_table(0)
