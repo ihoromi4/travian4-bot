@@ -23,7 +23,11 @@ class Controller:
         self.model = model
         self.view = view
 
-        self.view.on('on_click', self.open_service)
+        self.view.on_new_account.on(self.open_service)
 
     def open_service(self):
         self.model.open_service(account_settings)
+
+    def load_accounts(self, accounts_config: list):
+        for config in accounts_config:
+            self.view.add_account_card(config)

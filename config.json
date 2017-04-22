@@ -6,6 +6,11 @@
       "server": "http://ts5.travian.ru",
       "username": "broo",
       "password": "wA4iN_tYR"
+    },
+    {
+      "server": "http://ts4.travian.com",
+      "username": "bro",
+      "password": "1994igor"
     }
   ]
 }

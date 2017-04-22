@@ -3,5 +3,7 @@
     "icon_path": "data/travbot.png",
     "ui_dir": "data/ui",
     "ui_signindialog": "data/ui/signindialog.ui",
-    "ui_mainwindow": "data/ui/mainwindow.ui"
+    "ui_mainwindow": "data/ui/mainwindow.ui",
+    "ui_playingcard": "data/ui/playingcard.ui",
+    "ui_newplayingcard": "data/ui/newplayingcard.ui"
 }
