@@ -1,16 +1,9 @@
 {
-  "email": "counter3d@gmail.com",
-  "password": "marsiani",
-  "accounts": [
-    {
-      "server": "http://ts5.travian.ru",
-      "username": "broo",
-      "password": "wA4iN_tYR"
-    },
-    {
-      "server": "http://ts4.travian.com",
-      "username": "bro",
-      "password": "1994igor"
-    }
-  ]
+  "data_dir": "data",
+  "config_dir": "data",
+  "images": "data/images",
+  "ui": "data/ui",
+  "ui_config": "ui.json",
+  "profiles_config": "profiles.json",
+  "pushbullet_api_key": "o.SCDm9U2Whh96iCmVFhB3VCBi0QhJmB40"
 }

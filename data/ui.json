@@ -1,6 +1,6 @@
 {
     "mainwindow_title": "Travian Legends Bot",
-    "icon_path": "data/travbot.png",
+    "icon_path": "data/images/icon.png",
     "ui_dir": "data/ui",
     "ui_signindialog": "data/ui/signindialog.ui",
     "ui_mainwindow": "data/ui/mainwindow.ui",

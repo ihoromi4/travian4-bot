@@ -11,11 +11,11 @@ from .signindialog import SignUpDialog
 
 
 class View(observer.Observable):
-    def __init__(self, settings: dict, config: dict):
+    def __init__(self, ui_config: dict, profiles_config: dict):
         super(observer.Observable, self).__init__()
 
-        self.settings = settings
-        self.config = config
+        self.ui_config = ui_config
+        self.profiles_config = profiles_config
 
         # events
         self.on_new_account = observer.Event()
@@ -28,13 +28,13 @@ class View(observer.Observable):
 
     def init_gui(self):
         self.app = QApplication(sys.argv)
-        self.mainwindow = MainWindow(self.settings)
+        self.mainwindow = MainWindow(self.ui_config)
 
     def show(self):
         self.mainwindow.show()
 
-        dialog = SignUpDialog(self.mainwindow, self.settings)
-        result = dialog.open_dialog(self.config)
+        dialog = SignUpDialog(self.mainwindow, self.ui_config)
+        result = dialog.open_dialog(self.profiles_config)
 
         print('email:', result['email'])
         print('password:', result['password'])
@@ -46,7 +46,7 @@ class View(observer.Observable):
         parrent = self.mainwindow.stacked_widget.widget(widget_cards_id)
 
         frame = QFrame(parrent)
-        uic.loadUi(self.settings['ui_newplayingcard'], frame)
+        uic.loadUi(self.ui_config['ui_newplayingcard'], frame)
 
         layout = parrent.findChild(QHBoxLayout)
         items_count = layout.count()
@@ -55,19 +55,19 @@ class View(observer.Observable):
 
         frame.show()
 
-    def add_account_card(self, config: dict):
+    def add_account_card(self, account_config: dict):
         widget_cards_id = 0
         parrent = self.mainwindow.stacked_widget.widget(widget_cards_id)
 
         frame = QFrame(parrent)
-        uic.loadUi(self.settings['ui_playingcard'], frame)
+        uic.loadUi(self.ui_config['ui_playingcard'], frame)
 
         layout = parrent.findChild(QHBoxLayout)
         items_count = layout.count()
         offset = 2
         layout.insertWidget(items_count - offset, frame)
 
-        frame.label_server.setText(config['server'])
-        frame.label_username.setText(config['username'])
+        frame.label_server.setText(account_config['server'])
+        frame.label_username.setText(account_config['username'])
 
         frame.show()
