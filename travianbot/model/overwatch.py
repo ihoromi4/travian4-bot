@@ -1,6 +1,4 @@
-import time
-
-from guilib import push
+from .web import push
 
 
 class Overwatch:
