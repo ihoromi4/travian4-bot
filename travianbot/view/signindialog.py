@@ -15,16 +15,25 @@ class SignUpDialog(QDialog):
         self.button_exit.clicked.connect(self.exit)
         self.button_ok.clicked.connect(self.close)
 
-    def open_dialog(self, config: dict):
+    def open_dialog(self, profiles_config: dict):
+        config = profiles_config[0]
+
+        password = '******'
+
         self.edit_email.setText(config['email'])
-        self.edit_password.setText(config['password'])
+        self.edit_password.setText(password)
 
         self.show()
         self.exec()
 
+        if self.edit_password.text() != password:
+            password = self.edit_password.text()
+        else:
+            password = config['password_sha1']
+
         return {
             'email': self.edit_email.text(),
-            'password': self.edit_password.text()
+            'password': password
         }
 
     def exit(self):

@@ -1,16 +1,18 @@
-{
-  "email": "counter3d@gmail.com",
-  "password": "marsiani",
-  "accounts": [
-    {
-      "server": "http://ts5.travian.ru",
-      "username": "broo",
-      "password": "wA4iN_tYR"
-    },
-    {
-      "server": "http://ts4.travian.com",
-      "username": "bro",
-      "password": "1994igor"
-    }
-  ]
-}
+[
+  {
+    "email": "counter3d@gmail.com",
+    "password_sha1": "f5c286e95d756849b222714abeb77eae43b4fded",
+    "accounts": [
+      {
+        "server": "http://ts5.travian.ru",
+        "username": "broo",
+        "password": "wA4iN_tYR"
+      },
+      {
+        "server": "http://ts4.travian.com",
+        "username": "bro",
+        "password": "1994igor"
+      }
+    ]
+  }
+]
