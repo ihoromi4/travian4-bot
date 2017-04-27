@@ -19,6 +19,7 @@ class View(observer.Observable):
 
         # events
         self.on_new_account = observer.Event()
+        self.on_open_profile = observer.Event()
 
         self.init_gui()
 
@@ -33,8 +34,9 @@ class View(observer.Observable):
     def show(self):
         self.mainwindow.show()
 
-        dialog = SignUpDialog(self.mainwindow, self.ui_config)
-        result = dialog.open_dialog(self.profiles_config)
+        dialog = SignUpDialog(self.mainwindow, self.ui_config, self.profiles_config)
+        dialog.on_open_profile.on(lambda config: self.on_open_profile.trigger(config))
+        result = dialog.open_dialog()
 
         print('email:', result['email'])
         print('password:', result['password'])

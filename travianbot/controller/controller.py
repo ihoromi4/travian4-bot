@@ -23,7 +23,11 @@ class Controller:
         self.model = model
         self.view = view
 
+        self.view.on_open_profile.on(self.on_open_profile)
         self.view.on_new_account.on(self.on_new_account)
+
+    def on_open_profile(self, config):
+        self.load_accounts(config['accounts'])
 
     def on_new_account(self):
         self.view.new_account_card()

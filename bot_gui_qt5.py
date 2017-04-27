@@ -30,6 +30,6 @@ with open(profiles_config_path) as file:
 model = Model()
 view = View(view_config, profiles_config)
 controller = Controller(model, view)
-controller.load_accounts(profiles_config[0]['accounts'])
+# controller.load_accounts(profiles_config[0]['accounts'])
 
 view.show()

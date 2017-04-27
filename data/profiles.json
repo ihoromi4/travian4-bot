@@ -14,5 +14,16 @@
         "password": "1994igor"
       }
     ]
+  },
+  {
+    "email": "kudrin@gmail.com",
+    "password_sha1": "password",
+    "accounts": [
+      {
+        "server": "http://ts5.travian.ru",
+        "username": "broo",
+        "password": "wA4iN_tYR"
+      }
+    ]
   }
 ]

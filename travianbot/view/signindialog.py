@@ -2,42 +2,71 @@ import sys
 
 from PyQt5.QtWidgets import QDialog
 from PyQt5 import uic
+import observer
 
 
 class SignUpDialog(QDialog):
-    def __init__(self, parrent, settings: dict):
+    def __init__(self, parrent, settings: dict, profiles_config: dict):
         super(QDialog, self).__init__(parrent)
 
         uic.loadUi(settings['ui_signindialog'], self)
 
+        self.profiles_config = profiles_config
+        self.any_password = '******'
+
         self.setModal(True)
 
+        self.on_open_profile = observer.Event()
+
         self.button_exit.clicked.connect(self.exit)
-        self.button_ok.clicked.connect(self.close)
+        self.button_ok.clicked.connect(self.ok)
 
-    def open_dialog(self, profiles_config: dict):
-        config = profiles_config[0]
+    def get_email(self):
+        return self.combobox_emails.currentText()
+    email = property(get_email)
 
+    def get_password(self):
+        try:
+            config = next((i for i in self.profiles_config if i['email'] == self.email))
+            if self.edit_password.text() == self.any_password:
+                return config['password_sha1']
+            else:
+                return self.edit_password.text()
+        except StopIteration:
+            return self.edit_password.text()
+    password = property(get_password)
+
+    def get_config(self):
+        try:
+            return next((i for i in self.profiles_config if i['email'] == self.email))
+        except StopIteration:
+            return {}
+    config = property(get_config)
+
+    def validate_password(self, password: str):
+        return True
+
+    def open_dialog(self):
         password = '******'
 
-        self.edit_email.setText(config['email'])
+        for profile in self.profiles_config:
+            self.combobox_emails.addItem(profile['email'])
+
         self.edit_password.setText(password)
 
         self.show()
         self.exec()
 
-        if self.edit_password.text() != password:
-            password = self.edit_password.text()
-        else:
-            password = config['password_sha1']
+        self.on_open_profile.trigger(self.config)
 
         return {
-            'email': self.edit_email.text(),
-            'password': password
+            'email': self.email,
+            'password': self.password
         }
 
     def exit(self):
         sys.exit()
 
-    def close(self):
-        super(QDialog, self).close()
+    def ok(self):
+        if self.validate_password(self.password):
+            super(QDialog, self).close()
