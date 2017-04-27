@@ -11,8 +11,12 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.settings = settings
-
         uic.loadUi(settings['ui_mainwindow'], self)
+
+        widget_cards_id = 0
+        self.cards_widget = self.stacked_widget.widget(widget_cards_id)
+
+        self.button_new_account = self.cards_widget.findChild(QPushButton, 'button_new_account')
 
         self.setGeometry(130, 22, 500, 500)
         self.setWindowTitle(settings['mainwindow_title'])

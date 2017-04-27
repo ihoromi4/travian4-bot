@@ -63,6 +63,7 @@ class View(observer.Observable):
         offset = 2
         layout.insertWidget(items_count - offset, card)
 
+        self.mainwindow.button_new_account.hide()
         #card.show()
 
     def save_new_account_card(self):
@@ -79,6 +80,8 @@ class View(observer.Observable):
         self._new_card = None
 
         self.add_account_card(account_config)
+
+        self.mainwindow.button_new_account.show()
 
     def add_account_card(self, account_config: dict):
         widget_cards_id = 0
