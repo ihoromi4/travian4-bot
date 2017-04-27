@@ -11,7 +11,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.settings = settings
-        # ---
+
         uic.loadUi(settings['ui_mainwindow'], self)
 
         self.setGeometry(130, 22, 500, 500)

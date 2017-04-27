@@ -8,6 +8,8 @@ import observer
 
 from .mainwindow import MainWindow
 from .signindialog import SignUpDialog
+from .newaccountcard import NewAccountCard
+from .accountcard import AccountCard
 
 
 class View(observer.Observable):
@@ -16,6 +18,7 @@ class View(observer.Observable):
 
         self.ui_config = ui_config
         self.profiles_config = profiles_config
+        self._new_card = None
 
         # events
         self.on_new_account = observer.Event()
@@ -44,32 +47,48 @@ class View(observer.Observable):
         sys.exit(self.app.exec())
 
     def new_account_card(self):
+        if self._new_card:
+            return
+
         widget_cards_id = 0
         parrent = self.mainwindow.stacked_widget.widget(widget_cards_id)
 
-        frame = QFrame(parrent)
-        uic.loadUi(self.ui_config['ui_newplayingcard'], frame)
+        ui = self.ui_config['ui_newplayingcard']
+
+        card = self._new_card = NewAccountCard(parrent, ui)
+        card.on_save.on(self.save_new_account_card)
 
         layout = parrent.findChild(QHBoxLayout)
         items_count = layout.count()
         offset = 2
-        layout.insertWidget(items_count - offset, frame)
+        layout.insertWidget(items_count - offset, card)
 
-        frame.show()
+        #card.show()
+
+    def save_new_account_card(self):
+        widget_cards_id = 0
+        parrent = self.mainwindow.stacked_widget.widget(widget_cards_id)
+
+        layout = parrent.findChild(QHBoxLayout)
+        layout.removeWidget(self._new_card)
+
+        account_config = self._new_card.get_account_config()
+
+        self._new_card.hide()
+        self._new_card.destroy()
+        self._new_card = None
+
+        self.add_account_card(account_config)
 
     def add_account_card(self, account_config: dict):
         widget_cards_id = 0
         parrent = self.mainwindow.stacked_widget.widget(widget_cards_id)
 
-        frame = QFrame(parrent)
-        uic.loadUi(self.ui_config['ui_playingcard'], frame)
+        ui = self.ui_config['ui_playingcard']
+
+        card = AccountCard(parrent, ui, account_config)
 
         layout = parrent.findChild(QHBoxLayout)
         items_count = layout.count()
         offset = 2
-        layout.insertWidget(items_count - offset, frame)
-
-        frame.label_server.setText(account_config['server'])
-        frame.label_username.setText(account_config['username'])
-
-        frame.show()
+        layout.insertWidget(items_count - offset, card)

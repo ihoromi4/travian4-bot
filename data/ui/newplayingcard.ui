@@ -40,7 +40,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="comboBox"/>
+    <widget class="QComboBox" name="combobox_server">
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="label_3">
@@ -50,7 +54,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit"/>
+    <widget class="QLineEdit" name="edit_username"/>
    </item>
    <item>
     <widget class="QLabel" name="label_4">
@@ -60,7 +64,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit_2"/>
+    <widget class="QLineEdit" name="edit_password"/>
    </item>
    <item>
     <spacer name="verticalSpacer">
@@ -76,7 +80,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="button_save">
      <property name="text">
       <string>Save and run</string>
      </property>
