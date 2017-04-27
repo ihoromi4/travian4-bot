@@ -1,9 +1,9 @@
 {
-  "data_dir": "data",
-  "config_dir": "data",
-  "images": "data/images",
-  "ui": "data/ui",
-  "ui_config": "ui.json",
-  "profiles_config": "profiles.json",
-  "pushbullet_api_key": "o.SCDm9U2Whh96iCmVFhB3VCBi0QhJmB40"
+    "pushbullet_api_key": "o.SCDm9U2Whh96iCmVFhB3VCBi0QhJmB40",
+    "data_dir": "data",
+    "ui": "data/ui",
+    "config_dir": "data",
+    "profiles_config": "profiles.json",
+    "ui_config": "ui.json",
+    "images": "data/images"
 }

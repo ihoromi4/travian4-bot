@@ -2,6 +2,8 @@ import os
 import logging
 import json
 
+from travianbot import jsonconf
+
 if not os.path.isdir('log'):
     os.makedirs('log')
 
@@ -16,16 +18,14 @@ from travianbot.controller import Controller
 from travianbot.view import View
 
 config_path = 'config.json'
-with open(config_path) as file:
-    config = json.load(file)
+
+config = jsonconf.JSONConf(config_path)
 
 ui_config_path = os.path.join(config['config_dir'], config['ui_config'])
-with open(ui_config_path) as file:
-    view_config = json.load(file)
+view_config = jsonconf.JSONConf(ui_config_path)
 
 profiles_config_path = os.path.join(config['config_dir'], config['profiles_config'])
-with open(profiles_config_path) as file:
-    profiles_config = json.load(file)
+profiles_config = jsonconf.JSONConf(profiles_config_path)
 
 model = Model()
 view = View(view_config, profiles_config)
