@@ -3,3 +3,4 @@ bs4
 html5lib
 PyQt5
 pattern-observer
+cx_freeze
