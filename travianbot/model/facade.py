@@ -18,3 +18,6 @@ class Model:
         service.close()
         if service == self.current_service:
             self.current_service = None
+
+    def start_service(self):
+        pass

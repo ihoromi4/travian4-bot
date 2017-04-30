@@ -4,33 +4,6 @@ import time
 
 from travianapi import account
 
-import travianbot
-from travianbot import exceptions
-from travianbot.model.web import interaction
-
-url_api = 'http://igoromi4.pythonanywhere.com'
-url_api = 'http://127.0.0.1:5000'
-
-version_ok = interaction.verification(url_api, travianbot.__version_tuple__)
-if not version_ok:
-    print('Please, load new bot version')
-    raise exceptions.VersionError()
-
-accounts = interaction.load_accounts(url_api)
-
-print('accounts:', accounts)
-
-accounts = accounts[0]
-
-url = accounts['url']  # 'http://ts5.travian.ru/'
-name = accounts['username']  # 'broo'
-password = accounts['password']  # 'wA4iN_tYR'
-
-user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0'
-headers = {'User-Agent': user_agent}
-
-acc = account.Account(url, name, password, headers)
-
 # Типы поселений (битовые маски):
 IGNORE = 0  # поселение игнорируется
 
@@ -178,53 +151,3 @@ class ResourceTransferNet:
         for node in sources:
             node.send_to(targets)
             time.sleep(3.0)
-
-
-def watch(self):
-    target_village_id = 79385
-    target_village = self.account._villages[target_village_id]
-    while True:
-        for village in self.account.villages:
-            if village.id == target_village_id:
-                continue
-            if village.id != 75423:
-                continue
-            if village.inside.marketplace.free_merchants == 0:
-                continue
-            marketplace = village.inside.marketplace
-            transfer_percent = 3 / 17.6
-            resources = village.resources
-            warehouse = village.warehouse
-            granary = village.granary
-            if resources[account.LUMBER] / warehouse > transfer_percent:
-                if village.inside.marketplace.free_merchants > 0:
-                    marketplace.send_resources(target_village.pos, (500, 0, 0, 0))
-                    print('send lumber')
-            if resources[account.CLAY] / warehouse > transfer_percent:
-                if village.inside.marketplace.free_merchants > 0:
-                    marketplace.send_resources(target_village.pos, (0, 500, 0, 0))
-                    print('send clay')
-            if resources[account.IRON] / warehouse > transfer_percent:
-                if village.inside.marketplace.free_merchants > 0:
-                    marketplace.send_resources(target_village.pos, (0, 0, 500, 0))
-                    print('send iron')
-                    # if resources[account.CROP] / granary > transfer_percent:
-                    #    if village.inside.marketplace.free_merchants > 0:
-                    #        marketplace.send_resources(target_village.pos, (0, 0, 0, 500))
-                    #        print('send crop')
-        print('while iteration', time.time())
-        time.sleep(30 + 30 * random.random())
-
-
-def start_transfer_loop():
-    from time import sleep
-    transfer_net = ResourceTransferNet(acc, settings)
-
-    while True:
-        logging.debug('Просмотр деревень...')
-        transfer_net.update()
-        sleep(60 * 5)
-
-
-if __name__ == '__main__':
-    start_transfer_loop()

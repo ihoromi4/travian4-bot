@@ -80,7 +80,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="button_bot_start">
      <property name="text">
       <string>Start</string>
      </property>
@@ -99,7 +99,7 @@
   <zorder>label_username_const</zorder>
   <zorder>label_username</zorder>
   <zorder>verticalSpacer_2</zorder>
-  <zorder>pushButton_3</zorder>
+  <zorder>button_bot_start</zorder>
   <zorder>pushButton_2</zorder>
  </widget>
  <resources/>

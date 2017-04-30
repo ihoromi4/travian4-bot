@@ -25,6 +25,7 @@ class Controller:
 
         self.view.on_open_profile.on(self.on_open_profile)
         self.view.on_new_account.on(self.on_new_account)
+        self.view.on_account_bot_start.on(self.on_bot_start)
 
     def on_open_profile(self, config):
         self.load_accounts(config['accounts'])
@@ -32,9 +33,14 @@ class Controller:
     def on_new_account(self):
         self.view.new_account_card()
 
+    def on_bot_start(self):
+        print('start bot')
+        self.model.start_service()
+
     def open_service(self):
         self.model.open_service(account_settings)
 
     def load_accounts(self, accounts_config: list):
         for config in accounts_config:
+            self.open_service()
             self.view.add_account_card(config)

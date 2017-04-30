@@ -11,3 +11,10 @@ class AccountCard(QFrame):
 
         self.label_server.setText(account_config['server'])
         self.label_username.setText(account_config['username'])
+
+        self.on_account_bot_start = observer.Event()
+
+        self.button_bot_start.clicked.connect(self.on_bot_start)
+
+    def on_bot_start(self):
+        self.on_account_bot_start.trigger()

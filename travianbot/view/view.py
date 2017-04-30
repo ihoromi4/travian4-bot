@@ -1,9 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QFrame
 from PyQt5.QtWidgets import QHBoxLayout
-from PyQt5 import uic
 import observer
 
 from .mainwindow import MainWindow
@@ -12,17 +10,17 @@ from .newaccountcard import NewAccountCard
 from .accountcard import AccountCard
 
 
-class View(observer.Observable):
+class View:
     def __init__(self, ui_config: dict, profiles_config: dict):
-        super(observer.Observable, self).__init__()
-
         self.ui_config = ui_config
         self.profiles_config = profiles_config
         self._new_card = None
 
         # events
-        self.on_new_account = observer.Event()
         self.on_open_profile = observer.Event()
+
+        self.on_new_account = observer.Event()
+        self.on_account_bot_start = observer.Event()
 
         self.init_gui()
 
@@ -90,6 +88,8 @@ class View(observer.Observable):
         ui = self.ui_config['ui_playingcard']
 
         card = AccountCard(parrent, ui, account_config)
+
+        card.on_account_bot_start.on(self.on_account_bot_start.trigger)
 
         layout = parrent.findChild(QHBoxLayout)
         items_count = layout.count()
