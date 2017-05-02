@@ -7,17 +7,18 @@ from .statemachine import StateMachine
 
 from travianapi import account
 from . import restransfer
+from . import service
 
 QUEUE_LIMIT = 0
 
 
-class BotService(StateMachine):
+class BotService(service.Service, StateMachine):
     """ Обьединяет функции управления отдельным аккаунтом """
 
     def __init__(self, settings: dict):
+        service.Service.__init__(self)
         super(StateMachine, self).__init__()
 
-        self.orders = queue.Queue()
         self.is_open = True
 
         self.settings = settings
@@ -29,15 +30,19 @@ class BotService(StateMachine):
         self.account = None
         self.resource_transfer = None
 
-        self.thread = threading.Thread(target=self.run)
-        self.thread.daemon = True
-        self.thread.start()
+        self.start_service_thread(self.run)
+
+        self.f()
 
     def close(self) -> None:
-        """ Закрывает сервис - останавливает управление за аккаунтом """
+        """ Закрывает сервис - останавливает управление аккаунтом """
 
         self.is_open = False
         print('service', id(self), 'close')
+
+    @service.transmitter
+    def f(self):
+        print('some func')
 
     def run(self) -> None:
         """ Функция выполняется в новом потоке. Управляет аккаунтом """
@@ -49,5 +54,6 @@ class BotService(StateMachine):
 
         while self.is_open:
             print('Bot service', id(self), 'step')
+            self.handle_orders()
             self.resource_transfer.update()
             sleep(3)
