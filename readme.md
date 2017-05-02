@@ -2,12 +2,14 @@
 
 ## Dependings
 * travianapi
+* pattern-observer
 * pyqt5
 * pyside
 * htmlPy
+* cx_freeze
 
 ## Running
-run in linux terminal:
+run python script:
 `python3 bot_gui_qt5.py`
 
 ## Documentation
